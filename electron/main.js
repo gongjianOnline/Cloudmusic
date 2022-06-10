@@ -32,7 +32,7 @@ class AppWindow extends BrowserWindow{
 }
 app.on("ready",()=>{
   mainWindow = new AppWindow({
-    width:800,
+    width:1020,
     height:600,
     autoHideMenuBar : true,
     titleBarStyle:"hidden",

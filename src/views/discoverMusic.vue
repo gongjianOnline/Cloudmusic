@@ -27,30 +27,6 @@ export default{
   name:"discoverMusic",
   setup(){
     const router = useRouter()
-    // 轮播图片列表
-    const carouselList = reactive([
-      {
-        url:"/img/discoverMusic/1.jpg"
-      },
-      {
-        url:'/img/discoverMusic/2.jpg'
-      },
-      {
-        url:'/img/discoverMusic/3.jpg'
-      },
-      {
-        url:'/img/discoverMusic/4.jpg'
-      },
-      {
-        url:'/img/discoverMusic/5.jpg'
-      },
-      {
-        url:'/img/discoverMusic/6.jpg'
-      },
-      {
-        url:'/img/discoverMusic/7.jpg'
-      }
-    ]);
     // 标签页列表
     const tabsIndex = ref(0);
     const tabsList = reactive([
@@ -73,7 +49,6 @@ export default{
       router.replace({name:row.routerNumber})
     }
     return {
-      carouselList,
       tabsList,
       tabsIndex,
       handelTabsClick
