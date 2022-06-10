@@ -3,13 +3,15 @@
     <!-- 顶部 -->
     <Header></Header>
 
-
+    <!-- 底部 -->
+    <Footer></Footer>
   </div>
   
 </template>
 
 <script setup>
 import Header from "../components/Layout/header.vue"
+import Footer from "../components/Layout/footer.vue"
 
 
 
