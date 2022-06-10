@@ -2,7 +2,13 @@
   <div class="wrapper">
     <!-- 顶部 -->
     <Header></Header>
-
+    <!-- 内容区 -->
+    <div class="mainContainer">
+      <div class="mainMenu">
+        <MainMenu></MainMenu>
+      </div>
+      <div class="mainView"></div>
+    </div>
     <!-- 底部 -->
     <Footer></Footer>
   </div>
@@ -12,6 +18,7 @@
 <script setup>
 import Header from "../components/Layout/header.vue"
 import Footer from "../components/Layout/footer.vue"
+import MainMenu from "../components/mainContainer/mainMenu.vue"
 
 
 
@@ -22,12 +29,19 @@ import Footer from "../components/Layout/footer.vue"
   width: 100%;
   height: 100%;  
 }
-.headerContainer{
+/* 主要视口 */
+.mainContainer{
+  display: flex;
   width: 100%;
-  height: 60px;
-  background: #ec4141;
-  color: #fff;
-  padding: 20px;
-  -webkit-app-region: drag;
+  height: calc(100% - 75px - 60px);
+}
+.mainMenu{
+  width: 20%;
+  height: 100%;
+  border-right: 1px solid #e1e1e1;
+}
+.mainView{
+  width: 80%;
+  height: 100%;
 }
 </style>
