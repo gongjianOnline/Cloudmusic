@@ -10,6 +10,26 @@ const routes = [
           name:"discoverMusic",
           title:"发现音乐",
           component: () => import('../views/discoverMusic.vue'), 
+          children:[
+            {
+              path: '/',
+              name:"recommend",
+              title:"个性推荐",
+              component: () => import('../views/discoverMusic/recommend.vue'), 
+            },
+            {
+              path: '/discoverMusic/songSheet',
+              name:"songSheet",
+              title:"歌单",
+              component: () => import('../views/discoverMusic/songSheet.vue'), 
+            },
+            {
+              path: '/discoverMusic/rankingList',
+              name:"rankingList",
+              title:"排行榜",
+              component: () => import('../views/discoverMusic/rankingList.vue'), 
+            },
+          ]
         },
         {
           path: '/dailySongList',
