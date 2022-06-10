@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="footerWrapper">
     <!-- 音乐信息 -->
     <div class="musicInfoContainer">
       <div class="musicImg"></div>
@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style scoped>
-.wrapper{
+.footerWrapper{
   position: fixed;
   left: 0;
   bottom: 0;

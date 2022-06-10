@@ -9,10 +9,12 @@
 </template>
 
 <script>
-import {reactive,ref} from "vue"
+import {reactive,ref} from "vue";
+import { useRouter } from 'vue-router'
 export default{
   name:"mainMenu",
   setup(){
+    const router = useRouter();
     // 菜单列表
     const menuList = reactive([
       {
@@ -28,7 +30,7 @@ export default{
       {
         id:0,
         menuName:"推荐歌曲",
-        routerName:"recommendMusicList",
+        routerName:"newMusic",
       },
       {
         id:0,
@@ -40,7 +42,8 @@ export default{
     const menuIndex = ref(0)
     // 监听菜单选中事件
     const handelMenuClick = (row,index)=>{
-      menuIndex.value = index
+      menuIndex.value = index;
+      router.push({name:row.routerName,replace: true})
     }
     return {
       menuList,

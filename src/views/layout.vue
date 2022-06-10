@@ -7,7 +7,9 @@
       <div class="mainMenu">
         <MainMenu></MainMenu>
       </div>
-      <div class="mainView"></div>
+      <div class="mainView">
+        <router-view></router-view>
+      </div>
     </div>
     <!-- 底部 -->
     <Footer></Footer>

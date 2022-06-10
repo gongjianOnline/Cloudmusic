@@ -4,6 +4,32 @@ const routes = [
       name: 'views',
       title: '首页',
       component: () => import('../views/layout.vue'), 
+      children:[
+        {
+          path: '/',
+          name:"discoverMusic",
+          title:"发现音乐",
+          component: () => import('../views/discoverMusic.vue'), 
+        },
+        {
+          path: '/dailySongList',
+          name:"dailySongList",
+          title:"每日歌单",
+          component: () => import('../views/dailySongList.vue'), 
+        },
+        {
+          path: '/newMusic',
+          name:"newMusic",
+          title:"推荐歌单",
+          component: () => import('../views/newMusic.vue'), 
+        },
+        {
+          path: '/privateFM',
+          name:"privateFM",
+          title:"私人FM",
+          component: () => import('../views/privateFM.vue'), 
+        }
+      ]
   }
 ]
 export default routes
