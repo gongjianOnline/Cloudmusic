@@ -13,7 +13,7 @@
     </div>
 
     <!--tabs三级路由-->
-    <div>
+    <div class="tabsView">
       <router-view></router-view>
     </div>
     
@@ -61,9 +61,12 @@ export default{
 <style scoped>
 .wrapper{
   padding: 24px;
+  position: relative;
 }
 .tabsContainer{
-
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 .tabsListContent{
   list-style: none;
@@ -89,5 +92,8 @@ export default{
   height: 2px;
   background: #ec4141;
   margin-top: 4px;
+}
+.tabsView{
+  margin-top: 40px;
 }
 </style>

@@ -45,5 +45,6 @@ import MainMenu from "../components/mainContainer/mainMenu.vue"
 .mainView{
   width: 80%;
   height: 100%;
+  overflow: auto;
 }
 </style>
