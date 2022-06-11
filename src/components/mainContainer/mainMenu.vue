@@ -20,7 +20,7 @@ export default{
       {
         id:0,
         menuName:"发现音乐",
-        routerName:"discoverMusic",
+        routerName:"recommend",
       },
       {
         id:0,

@@ -2,8 +2,8 @@
     <!-- 顶部 -->
     <div class="headerContainer">
       <div class="LogoContainer">
-        <div class="LogoContent"></div>
-        <div class="LogoTitle">网易云音乐</div>
+        <!-- <div class="LogoContent"></div>
+        <div class="LogoTitle">网易云音乐</div> -->
       </div>
       <div class="searchContainer">
         <div class="searchIcon"></div>
@@ -83,11 +83,15 @@ export default{
 }
 /* 左logo */
 .LogoContainer{
+  width: 176px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background:url("/img/header/logo.png");
+  background-position: 0px -6px !important;
 }
-.LogoContent{
+/* .LogoContent{
   width: 25px;
   height: 25px;
   border-radius: 50%;
@@ -98,7 +102,7 @@ export default{
   color: #fff;
   margin-left: 10px;
   letter-spacing:2px
-}
+} */
 /* 中间搜索框 */
 .searchContainer{
   -webkit-app-region: no-drag;
