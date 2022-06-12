@@ -13,8 +13,11 @@
         <div class="moduleList">
           <div class="moduleItem" v-for="item in 5" :key="item">
             <div class="moduleImgContent">
-              <img src="" alt="">
-              <div class="moduleItemNumber">405万</div>
+              <img src="/img/discoverMusic/item.png" alt="">
+              <div class="moduleItemNumber">
+                <span>405万</span>
+              </div>
+              
             </div>
             <div class="moduleItemTitle">每日歌曲推荐</div>
           </div>
@@ -22,7 +25,7 @@
         <div class="moduleList">
           <div class="moduleItem" v-for="item in 5" :key="item">
             <div class="moduleImgContent">
-              <img src="" alt="">
+              <img src="/img/discoverMusic/item.png" alt="">
               <div class="moduleItemNumber">405万</div>
             </div>
             <div class="moduleItemTitle">每日歌曲推荐</div>
@@ -94,6 +97,7 @@ export default {
 .moduleContainer{
   margin-top: 30px;
   margin-bottom: 30px;
+  padding:0px 20px
 }
 .moduleTitle{
   font-size: 20px;
@@ -138,6 +142,11 @@ export default {
   border-radius: 10px;
   background: #ccc;
   position: relative;
+}
+.moduleImgContent>img{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
 }
 .moduleItemNumber{
   position: absolute;

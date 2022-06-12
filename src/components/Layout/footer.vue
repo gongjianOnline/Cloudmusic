@@ -11,11 +11,31 @@
     <!-- 中间控制器 -->
     <div class="musicOperationContainer">
       <div class="musicController">
-        <span class="musicBtn"></span>
-        <span class="musicBtn"></span>
-        <span class="musicStress"></span>
-        <span class="musicBtn"></span>
-        <span class="musicBtn"></span>
+        <span class="musicBtn">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-liebiaoxunhuan"></use>
+          </svg>
+        </span>
+        <span class="musicBtn">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-shangyishou"></use>
+          </svg>
+        </span>
+        <span class="musicStress">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-bofang"></use>
+          </svg>
+        </span>
+        <span class="musicBtn">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-xiayishou"></use>
+          </svg>
+        </span>
+        <span class="musicBtn">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-geciweidianji"></use>
+          </svg>
+        </span>
       </div>
       <div class="dateContainer">
         <div class="dateNumber">00:29</div>
@@ -27,10 +47,21 @@
     </div>
     <!-- 右边操作 -->
     <div class="extendContainer">
-      <span style="margin-left:0"></span>
-      <span></span>
-      <span></span>
-      <span></span>
+      <span style="margin-left:0">
+        <svg class="icon extendIcon" aria-hidden="true">
+          <use xlink:href="#icon-yinxiao"></use>
+        </svg>
+      </span>
+      <span>
+        <svg class="icon extendIcon" aria-hidden="true">
+          <use xlink:href="#icon-yinliang"></use>
+        </svg>
+      </span>
+      <span>
+        <svg class="icon extendIcon" aria-hidden="true">
+          <use xlink:href="#icon-liebiao"></use>
+        </svg>
+      </span>
     </div>
   </div>
 </template>
@@ -96,14 +127,16 @@ export default {
 .musicBtn{
   width: 24px;
   height: 24px;
-  background: #bbb;
   border-radius: 50%;
+  line-height: 24px;
 }
 .musicStress{
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background:#c3c3c3;
+  background:#f4f4f4;
+  line-height: 40px;
+  text-align: center;
 }
 .dateContainer{
   width: 100%;
@@ -128,9 +161,14 @@ export default {
 .extendContainer>span{
   width: 24px;
   height: 24px;
-  background: #bbb;
   margin-left: 10px;
   cursor: pointer;
+  text-align: center;
+  line-height: 24px;
+}
+.extendIcon{
+  width: 20px;
+  height: 20px;
 }
 
 

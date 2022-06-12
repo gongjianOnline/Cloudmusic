@@ -1,25 +1,48 @@
 <template>
     <!-- 顶部 -->
     <div class="headerContainer">
-      <div class="LogoContainer">
-        <!-- <div class="LogoContent"></div>
-        <div class="LogoTitle">网易云音乐</div> -->
-      </div>
-      <div class="searchContainer">
-        <div class="searchIcon"></div>
-        <input type="text" class="searchInput">
+      <div class="headerLeft">
+        <div class="LogoContainer"></div>
+        <div class="searchContainer">
+          <div class="searchIcon">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-sousuo"></use>
+            </svg>
+          </div>
+          <input type="text" class="searchInput">
+        </div>
       </div>
       <div class="operationContainer">
         <div class="userInfoCenter">
-          <div class="userLogo"></div>
+          <div class="userLogo">
+            <svg class="icon userIcon" aria-hidden="true">
+              <use xlink:href="#icon-yonghu"></use>
+            </svg>
+          </div>
           <div class="userName">未登录</div>
           <div class="splitContent"></div>
         </div>
         <div class="operationContent">
-          <div class="operationBtn" @click="handelHideWindow">隐</div>
-          <div class="operationBtn" @click="handelRestoreWindow" v-show="windowState">还</div>
-          <div class="operationBtn" @click="handelMaxWindow" v-show="!windowState">大</div>
-          <div class="operationBtn" @click="handelCloseWindow">关</div>
+          <div class="operationBtn" @click="handelHideWindow">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-zuixiaohua"></use>
+            </svg>
+          </div>
+          <div class="operationBtn" @click="handelRestoreWindow" v-show="windowState">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-24gl-minimize2"></use>
+            </svg>
+          </div>
+          <div class="operationBtn" @click="handelMaxWindow" v-show="!windowState">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-3zuidahua-1"></use>
+            </svg>
+          </div>
+          <div class="operationBtn" @click="handelCloseWindow">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-guanbi"></use>
+            </svg>
+          </div>
         </div>
         
       </div>
@@ -70,6 +93,9 @@ export default{
 </script>
 
 <style scoped>
+.icon{
+  fill:#fff !important
+}
 .headerContainer{
   width: 100%;
   height: 60px;
@@ -81,6 +107,12 @@ export default{
   align-items: center;
   -webkit-app-region: drag;
 }
+.headerLeft{
+  width: 32%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 /* 左logo */
 .LogoContainer{
   width: 176px;
@@ -91,18 +123,6 @@ export default{
   background:url("/img/header/logo.png");
   background-position: 0px -6px !important;
 }
-/* .LogoContent{
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: #fff;
-}
-.LogoTitle{
-  font-size: 18px;
-  color: #fff;
-  margin-left: 10px;
-  letter-spacing:2px
-} */
 /* 中间搜索框 */
 .searchContainer{
   -webkit-app-region: no-drag;
@@ -113,11 +133,13 @@ export default{
   top: 50%;
   left: 8px;
   transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-  background: #fff;
+  width: 23px;
+  height: 23px;
+  background: rgba(255,255,255,0.4);
   border-radius: 50%;
-  opacity: 0.2;
+  text-align: center;
+  line-height: 23px;
+  
 }
 .searchInput{
   width: 160px;
@@ -126,7 +148,7 @@ export default{
   background: rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   color:#fff;
-  padding-left: 32px;
+  padding-left: 40px;
 
 }
 .searchInput:focus{
@@ -144,9 +166,11 @@ export default{
 .operationBtn{
   width: 20px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.5);
   margin-left: 6px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 /* 用户信息 */
 .userInfoCenter{
@@ -157,9 +181,13 @@ export default{
 .userLogo{
   width: 30px;
   height: 30px;
-  background: #fff;
+  background: rgba(255,255,255,0.4);
   border-radius: 50%;
-  opacity: 0.4;
+  line-height: 40px;
+}
+.userIcon{
+  width: 24px;
+  height: 24px;
 }
 .userName{
   font-size: 14px;
