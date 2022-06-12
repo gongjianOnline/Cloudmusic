@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="discoverMusic-wrapper">
     <!-- 菜单栏 -->
     <div class="tabsContainer">
       <ul class="tabsListContent">
@@ -59,14 +59,20 @@ export default{
 </script>
 
 <style scoped>
-.wrapper{
+.discoverMusic-wrapper{
   padding: 24px;
   position: relative;
 }
 .tabsContainer{
-  position: absolute;
-  top: 20px;
-  left: 20px;
+  position: fixed;
+  top: 60px;
+  left: 20%;
+  right: 17px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  background-color: #fff;
+  z-index: 3;
 }
 .tabsListContent{
   list-style: none;
@@ -94,6 +100,6 @@ export default{
   margin-top: 4px;
 }
 .tabsView{
-  margin-top: 40px;
+  margin-top: 60px;
 }
 </style>

@@ -6,8 +6,9 @@ let mainWindow;
 class AppWindow extends BrowserWindow{
   constructor(config,fileLocation){
     const basicConfig = {
-      width:1025,
+      width:1080,
       height:800,
+      minWidth:1080,
       webPreferences:{
         nodeIntegration:true,
         contextIsolation: false,

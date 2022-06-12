@@ -19,8 +19,32 @@
       </div>
     </div>
 
-    <div class="Item">
+    <div class="songSheetListContainer">
+      <div class="songSheetListContent">
+        <div class="songSheetItem" v-for="(item) in 12" :key="item">
+          <div class="songSheetItemImg">
+            <div class="songSheetHeader">
+              <span>
+                <svg class="icon songSheetIcon" aria-hidden="true">
+                  <use xlink:href="#icon-24gl-play"></use>
+                </svg>
+              </span>
+              <span>200万</span>
+            </div>
+            <img src="/img/songSheet/item.png" alt="">
+            <div class="songSheetFooter">
+              <span>
+                <svg class="icon songSheetFooterIcon" aria-hidden="true">
+                  <use xlink:href="#icon-yonghu"></use>
+                </svg>
+              </span>
+              <span>伤感收留所</span>
+            </div>
+          </div>
+          <div class="songSheetItemTitle">旋律控 | 超级好听的华语说唱</div>
+        </div>
 
+      </div>
     </div>
 
 
@@ -37,10 +61,10 @@ export default{
 </script>
 <style scoped>
 .bannerContainer{
-  width: 100%;
   height: 230px;
   border-radius: 10px;
   padding: 0px 18px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   background-image: url("/img/songSheet/logo.png");
@@ -102,5 +126,59 @@ export default{
   fill:#e7aa5a;
   width: 24px;
   height: 24px;
+}
+/* 位移布局 */
+.songSheetListContainer{
+  width: 800px;
+  margin: 0 auto;
+  padding-top: 20px;
+}
+.songSheetListContent{
+  display: flex;
+  flex-wrap: wrap;
+  transform: translateX(10px);
+}
+.songSheetItem{
+  width: 180px;
+  text-align: left;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+.songSheetItemImg{
+  position: relative;
+  width: 180px;
+  height: 180px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.songSheetHeader{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #ffffff;
+  font-size: 12px;
+}
+.songSheetIcon{
+  fill: #ffffff;
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+.songSheetFooter{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  font-size: 14px;
+  color: #ffffff;
+}
+.songSheetFooterIcon{
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+.songSheetItemTitle{
+  margin-top: 10px;
+  font-size: 16px;
 }
 </style>
