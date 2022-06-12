@@ -40,6 +40,11 @@
               </span>
               <span>伤感收留所</span>
             </div>
+            <div class="playIconContainer">
+              <svg class="icon playIcon" aria-hidden="true">
+                <use xlink:href="#icon-bofang"></use>
+              </svg>
+            </div>
           </div>
           <div class="songSheetItemTitle">旋律控 | 超级好听的华语说唱</div>
         </div>
@@ -151,6 +156,7 @@ export default{
   background: rgba(0,0,0,0.4);
   border-radius: 10px;
   overflow: hidden;
+  cursor: pointer;
 }
 .songSheetHeader{
   position: absolute;
@@ -177,6 +183,33 @@ export default{
   height: 14px;
   margin-right: 2px;
 }
+/* 播放按钮 */
+.songSheetItemImg .playIconContainer{
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 42px;
+  height: 42px;
+  background: #e8e8e8;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 42px;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.songSheetItemImg:hover .playIconContainer{
+  opacity: 1;
+}
+
+
+.playIcon{
+  width: 18px;
+  height: 18px;
+  fill:#ec4141;
+  transform: translate(1px,2px);
+}
+
+/* 菜单标题 */
 .songSheetItemTitle{
   margin-top: 10px;
   font-size: 16px;
