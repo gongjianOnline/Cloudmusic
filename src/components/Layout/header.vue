@@ -8,6 +8,18 @@
     <div class="headerContainer">
       <div class="headerLeft">
         <div class="LogoContainer"></div>
+        <div class="historyContainer">
+          <div @click="handelHistory('back')">
+            <svg class="icon historyIcon backIcon" aria-hidden="true">
+              <use xlink:href="#icon-qianjin"></use>
+            </svg>
+          </div>
+          <div @click="handelHistory('next')">
+            <svg class="icon historyIcon" aria-hidden="true">
+              <use xlink:href="#icon-qianjin"></use>
+            </svg>
+          </div>
+        </div>
         <div class="searchContainer">
           <div class="searchIcon">
             <svg class="icon" aria-hidden="true">
@@ -57,10 +69,13 @@
 
 <script>
 import {ref} from "vue";
+import {useRouter} from "vue-router"
 const {ipcRenderer} = require("electron");
 export default{
   name:"header",
   setup(){
+    /**路由声明 */
+    const route = useRouter()
     /**数据集合 */
     const windowState = ref(false)
     // 监听隐藏按钮
@@ -83,13 +98,21 @@ export default{
     ipcRenderer.on("isMaxWindow",(event,arg)=>{
       windowState.value = arg
     })
-
+    /*监听路由前进后退*/
+    const handelHistory = (type)=>{
+      if(type === "back"){
+        route.go(-1)
+      }else{
+        route.go(1)
+      }
+    }
     return{
       windowState,
       handelHideWindow,
       handelMaxWindow,
       handelRestoreWindow,
-      handelCloseWindow
+      handelCloseWindow,
+      handelHistory
     }
   }
 }
@@ -113,10 +136,9 @@ export default{
   -webkit-app-region: drag;
 }
 .headerLeft{
-  width: 32%;
+  width: 50%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 /* 左logo */
 .LogoContainer{
@@ -127,6 +149,34 @@ export default{
   align-items: center;
   background:url("/img/header/logo.png");
   background-position: 0px -6px !important;
+}
+/* 历史切换 */
+.historyContainer{
+  width: 60px;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 10px;
+  -webkit-app-region: no-drag;
+}
+.historyContainer div{
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.historyIcon{
+  fill:#fff;
+  width: 14px;
+  height: 14px;
+}
+.backIcon{
+  transform: rotate(180deg);
 }
 /* 中间搜索框 */
 .searchContainer{
