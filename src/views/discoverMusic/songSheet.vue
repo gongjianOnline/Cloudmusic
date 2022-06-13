@@ -26,7 +26,29 @@
     </div>
     <!-- 分类列表 -->
     <div class="typeContainer">
-      <div class="buttonType">全部歌单</div>
+      <!-- 左侧扩展标签 -->
+      <el-popover 
+        placement="bottom" 
+        :width="600" 
+        trigger="click">
+        <template #reference>
+          <div class="buttonType">全部歌单</div>
+        </template>
+        <div class="typeExtendContainer">
+          <div class="typeExtendItem" 
+            v-for="(item,index) in songSheetTypeList"
+            :key="index">
+            <div class="typeExtendClass">{{item.type}}</div>
+            <div class="typeExtendTypeContent">
+              <span
+                @click="handleType(itemType.name)" 
+                v-for="(itemType,indexType) in item.childType"
+                :key="indexType">{{itemType.name}}</span>
+            </div>
+          </div>
+        </div>
+      </el-popover>
+      <!-- 右侧固定标签 -->
       <div class="typeList">
         <span @click="handleType('华语')">华语</span>
         <span @click="handleType('流行')">流行</span>
@@ -92,7 +114,8 @@ export default{
     const $http = proxy.$http;
     // 声明歌单列表
     const songSheetList = ref([]);
-
+    // 声明歌单类型 
+    const songSheetTypeList = reactive([])
     // 获取歌单列表
     const getSongSheetList = async (type)=>{
       let response = await proxy.$axios({
@@ -105,6 +128,28 @@ export default{
       })
       songSheetList.value = response.data.playlists;
     }
+    // 获取歌单类型
+    const getSongTypeList = async ()=>{
+      let response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/playlist/catlist/`
+      })
+      let {categories,sub} = response.data;
+      for(let key in categories){
+        songSheetTypeList.push({
+          type:categories[key],
+          category:key,
+          childType:[]
+        })
+      }
+      sub.forEach((item,index)=>{
+        songSheetTypeList.forEach((itemType,indexType)=>{
+          if(item.category == itemType.category){
+            itemType.childType.push(item)
+          }
+        })
+      })
+    }
     // 切换菜单 
     const handleType = (type)=>{
       getSongSheetList(type)
@@ -112,10 +157,12 @@ export default{
 
     onMounted(()=>{
       getSongSheetList()
+      getSongTypeList()
     })
 
     return{
       songSheetList,
+      songSheetTypeList,
       handleType,
     }
 
@@ -198,6 +245,33 @@ export default{
   margin-top: 16px;
   display: flex;
   justify-content: space-between;
+}
+.typeExtendContainer{
+  width:100%;
+  height: 400px;
+  overflow: auto;
+  font-size: 14px;
+}
+.typeExtendItem{
+  display: flex;
+}
+.typeExtendClass{
+  width:20%;
+  text-align: center;
+  padding-top: 20px;
+  color: #cfcfcf ;
+
+}
+.typeExtendTypeContent{
+  width:80%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.typeExtendTypeContent span{
+  display:block;
+  margin: 20px;
+  cursor: pointer;
+  color:#373737;
 }
 .buttonType{
   width: 103px;
