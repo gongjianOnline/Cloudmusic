@@ -5,8 +5,17 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import VueSplide from '@splidejs/vue-splide';
 import '@splidejs/vue-splide/css';
+import axios from "axios"
+
 
 const app = createApp(App)
+app.config.globalProperties.$axios = axios;
+if(process.env.NODE_ENV === "development"){
+  app.config.globalProperties.$http = "http";
+}else{
+  app.config.globalProperties.$http = "";
+}
+
 app.use(router)
 app.use( VueSplide )
 app.use(ElementPlus)
