@@ -16,7 +16,7 @@
       <div class="moduleContainer">
         <div class="moduleTitle">推荐歌单</div>
         <div class="moduleList">
-          <div class="moduleItem" v-for="item in 5" :key="item">
+          <div class="moduleItem" v-for="item in 5" :key="item" @click="handelModuleItem(item)">
             <div class="moduleImgContent">
               <img src="/img/discoverMusic/item.png" alt="">
               <div class="moduleItemNumber">
@@ -47,9 +47,12 @@
 
 <script>
 import { reactive } from "vue";
+import { useRouter } from "vue-router"
 export default {
   name: "recommend",
   setup() {
+    // 路由引入
+    const router = useRouter();
     // 轮播图片列表
     const carouselList = reactive([
       {
@@ -82,9 +85,15 @@ export default {
       type        : 'loop',
       focus       : 'center',
     })
+    // 跳转到歌单详情
+    const handelModuleItem = (item)=>{
+      router.push({name:'songListDetails'})
+    }
+    
     return {
       carouselList,
       options,
+      handelModuleItem
     };
   },
 };

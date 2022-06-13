@@ -48,7 +48,13 @@ const routes = [
           name:"privateFM",
           title:"私人FM",
           component: () => import('../views/privateFM.vue'), 
-        }
+        },
+        {
+          path: '/songListDetails',
+          name:"songListDetails",
+          title:"歌单详情",
+          component: () => import('../views/songListDetails.vue'), 
+        },
       ]
   }
 ]
