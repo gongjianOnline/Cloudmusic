@@ -24,10 +24,30 @@
         <div>可爱摇滚 | 一剂抵挡春困的上好良药</div>
       </div>
     </div>
+    <!-- 分类列表 -->
+    <div class="typeContainer">
+      <div class="buttonType">全部歌单</div>
+      <div class="typeList">
+        <span @click="handleType('华语')">华语</span>
+        <span @click="handleType('流行')">流行</span>
+        <span @click="handleType('摇滚')">摇滚</span>
+        <span @click="handleType('民谣')">民谣</span>
+        <span @click="handleType('电子')">电子</span>
+        <span @click="handleType('另类/独立')">另类/独立</span>
+        <span @click="handleType('轻音乐')">轻音乐</span>
+        <span @click="handleType('综艺')">综艺</span>
+        <span @click="handleType('影视原声')">影视原声</span>
+        <span @click="handleType('ACG')">ACG</span>
+      </div>
+    </div>
 
+
+    <!-- 歌单列表 -->
     <div class="songSheetListContainer">
       <div class="songSheetListContent">
-        <div class="songSheetItem" v-for="(item) in 12" :key="item">
+        <div class="songSheetItem"
+          v-for="(item) in songSheetList" 
+          :key="item.id">
           <div class="songSheetItemImg">
             <div class="songSheetHeader">
               <span>
@@ -35,16 +55,16 @@
                   <use xlink:href="#icon-24gl-play"></use>
                 </svg>
               </span>
-              <span>200万</span>
+              <span>{{item.subscribedCount}}</span>
             </div>
-            <img src="/img/songSheet/item.png" alt="">
+            <img :src="item.coverImgUrl" alt="">
             <div class="songSheetFooter">
               <span>
                 <svg class="icon songSheetFooterIcon" aria-hidden="true">
                   <use xlink:href="#icon-yonghu"></use>
                 </svg>
               </span>
-              <span>伤感收留所</span>
+              <span>{{item.creator.nickname}}</span>
             </div>
             <div class="playIconContainer">
               <svg class="icon playIcon" aria-hidden="true">
@@ -52,7 +72,7 @@
               </svg>
             </div>
           </div>
-          <div class="songSheetItemTitle">旋律控 | 超级好听的华语说唱</div>
+          <div class="songSheetItemTitle">{{item.name}}</div>
         </div>
 
       </div>
@@ -63,9 +83,41 @@
 </template>
 
 <script>
+import { ref,reactive , getCurrentInstance,onMounted } from "vue";
 export default{
   name:"songSheet",
   setup(){
+    // 获取全局上下文
+    const {proxy} = getCurrentInstance()
+    const $http = proxy.$http;
+    // 声明歌单列表
+    const songSheetList = ref([]);
+
+    // 获取歌单列表
+    const getSongSheetList = async (type)=>{
+      let response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/top/playlist`,
+        params:{
+          cat:type || "全部",
+          limit:20
+        }
+      })
+      songSheetList.value = response.data.playlists;
+    }
+    // 切换菜单 
+    const handleType = (type)=>{
+      getSongSheetList(type)
+    }
+
+    onMounted(()=>{
+      getSongSheetList()
+    })
+
+    return{
+      songSheetList,
+      handleType,
+    }
 
   }
 }
@@ -138,6 +190,37 @@ export default{
   width: 24px;
   height: 24px;
 }
+
+/* 分类列表 */
+.typeContainer{
+  width: 100%;
+  height: 30px;
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+.buttonType{
+  width: 103px;
+  height: 30px;
+  border:1px solid #d8d8d8;
+  line-height: 30px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.typeList span{
+  display: inline-block;
+  height: 30px;
+  margin-right: 22px;
+  font-size: 14px;
+  color:#676767;
+  line-height: 30px;
+  cursor: pointer;
+  transition: color 0.25s;
+}
+.typeList span:hover{
+  color:#5a5a5a
+}
+
 /* 位移布局 */
 .songSheetListContainer{
   width: 800px;
@@ -163,6 +246,11 @@ export default{
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
+  overflow: hidden;
+}
+.songSheetItemImg img{
+  width: 100%;
+  height: 100%;
 }
 .songSheetHeader{
   position: absolute;

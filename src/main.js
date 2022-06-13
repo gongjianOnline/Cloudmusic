@@ -11,7 +11,7 @@ import axios from "axios"
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;
 if(process.env.NODE_ENV === "development"){
-  app.config.globalProperties.$http = "http";
+  app.config.globalProperties.$http = "/http";
 }else{
   app.config.globalProperties.$http = "";
 }
