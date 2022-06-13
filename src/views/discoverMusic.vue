@@ -1,3 +1,8 @@
+<!-- 
+  - @description 发现音乐--布局页面
+  - @author 龚箭
+  - @since 2022/06/11
+-->
 <template>
   <div class="discoverMusic-wrapper">
     <!-- 菜单栏 -->

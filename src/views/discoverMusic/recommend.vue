@@ -1,3 +1,8 @@
+<!-- 
+  - @description 发现音乐--个性推荐
+  - @author 龚箭
+  - @since 2022/06/10
+-->
 <template>
   <div>
     <div class="carousel">

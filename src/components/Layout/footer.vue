@@ -1,3 +1,8 @@
+<!-- 
+  - @description 窗口布局--底部布局
+  - @author 龚箭
+  - @since 2022/06/11
+-->
 <template>
   <div class="footerWrapper">
     <!-- 音乐信息 -->

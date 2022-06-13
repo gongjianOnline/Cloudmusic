@@ -1,3 +1,8 @@
+<!-- 
+  - @description 窗口布局-顶部布局
+  - @author 龚箭
+  - @since 2022/06/11
+-->
 <template>
     <!-- 顶部 -->
     <div class="headerContainer">
