@@ -176,7 +176,6 @@ export default{
   width: 184px;
   height: 184px;
   border-radius: 10px;
-  background: red;
   overflow: hidden;
 }
 .SLDetailImg img{

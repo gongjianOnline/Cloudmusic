@@ -8,7 +8,7 @@
     <div class="rankingListTitle">官方榜</div>
     <!-- 官方推荐列表 -->
     <div class="officialListContainer" v-for="(item) in rankingTopList.data" :key="item.id">
-      <div class="officialItemLogo">
+      <div class="officialItemLogo" @click="handelModuleItem(item)">
         <div class="officialDate">刚刚更新</div>
         <div class="officialPlay">
           <svg class="icon playIcon" aria-hidden="true">
@@ -29,7 +29,7 @@
               <span v-for="(arItem) in tracksItem.ar" :key="arItem.id">{{arItem.name}}</span>
             </div>
           </li>
-          <li class="officialMore">查看更多</li>
+          <li class="officialMore" @click="handelModuleItem(item)">查看更多</li>
         </ul>
       </div>
     </div>
@@ -38,7 +38,10 @@
     <div class="rankingListTitle">全球榜</div>
     <!-- 全球榜列表 -->
     <div class="globalRankingsContainer">
-      <div class="globalRankingsItem" v-for="(item) in rankingList" :key="item.id">
+      <div class="globalRankingsItem" 
+        v-for="(item) in rankingList" 
+        :key="item.id"
+        @click="handelModuleItem(item)">
         <div class="globalRankingsImgContent">
           <img :src="item.coverImgUrl" alt="">
           <div class="playContent">
@@ -57,12 +60,17 @@
 
 <script>
 import { ref,reactive , getCurrentInstance,onMounted } from "vue";
+import { useRouter , useRoute} from 'vue-router'
+import dayjs from "dayjs"
 export default{
   name:"rankingList",
   setup(){
     // 获取全局上下文
     const {proxy} = getCurrentInstance();
     const $http = proxy.$http;
+    /**路由初始化 */
+    const router = useRouter();
+    const route = useRoute();
     /**声明数据响应式变量 */
     // 剩余歌单
     const rankingList = ref([]);
@@ -97,6 +105,12 @@ export default{
       rankingTopList.data.push(response.data.playlist)
     }
 
+    /**页面业务方法 */
+    // 进入详情
+    const handelModuleItem = (item)=>{
+      router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
+    }
+
     /**生命周期调用 */
     onMounted(()=>{
       getRankingList()
@@ -104,7 +118,8 @@ export default{
 
     return {
       rankingTopList,
-      rankingList
+      rankingList,
+      handelModuleItem
     }
 
     

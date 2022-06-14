@@ -69,7 +69,8 @@
       <div class="songSheetListContent">
         <div class="songSheetItem"
           v-for="(item) in songSheetList" 
-          :key="item.id">
+          :key="item.id"
+          @click="handelModuleItem(item)">
           <div class="songSheetItemImg">
             <div class="songSheetHeader">
               <span>
@@ -106,9 +107,13 @@
 
 <script>
 import { ref,reactive , getCurrentInstance,onMounted } from "vue";
+import { useRouter , useRoute} from 'vue-router'
 export default{
   name:"songSheet",
   setup(){
+    /**路由初始化 */
+    const router = useRouter();
+    const route = useRoute();
     // 获取全局上下文
     const {proxy} = getCurrentInstance()
     const $http = proxy.$http;
@@ -154,6 +159,10 @@ export default{
     const handleType = (type)=>{
       getSongSheetList(type)
     }
+    // 进入详情
+    const handelModuleItem = (item)=>{
+      router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
+    }
 
     onMounted(()=>{
       getSongSheetList()
@@ -164,6 +173,7 @@ export default{
       songSheetList,
       songSheetTypeList,
       handleType,
+      handelModuleItem
     }
 
   }
