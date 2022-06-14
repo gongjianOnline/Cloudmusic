@@ -29,7 +29,7 @@
       <!-- 左侧扩展标签 -->
       <el-popover 
         placement="bottom" 
-        :width="600" 
+        :width="500" 
         trigger="click">
         <template #reference>
           <div class="buttonType">全部歌单</div>
@@ -248,7 +248,7 @@ export default{
 }
 .typeExtendContainer{
   width:100%;
-  height: 400px;
+  height: 300px;
   overflow: auto;
   font-size: 14px;
 }

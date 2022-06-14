@@ -22,7 +22,12 @@
             @click="handelModuleItem(item)">
             <div class="moduleImgContent">
               <img :src="item.picUrl" alt="">
-              <div class="moduleItemNumber">{{item.trackCount}}万</div>
+              <div class="moduleItemNumber">
+                <svg class="icon moduleItemIcon" aria-hidden="true">
+                  <use xlink:href="#icon-24gl-play"></use>
+                </svg>
+                {{item.trackCount}}万
+              </div>
             </div>
             <div class="moduleItemTitle">{{item.name}}</div>
           </div>
@@ -177,6 +182,11 @@ export default {
   width: 100%;
   height: 100%;
   border-radius: 10px;
+}
+.moduleItemIcon{
+  fill:#fff;
+  width: 15px;
+  height: 15px;
 }
 .moduleItemNumber{
   position: absolute;
