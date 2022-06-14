@@ -11,10 +11,10 @@
       <li class="musicTitle">标题</li>
       <li class="musicAuthor">歌手</li>
       <li class="musicAlbum">专辑</li>
-      <li class="musicDuration">时间</li>
+      <!-- <li class="musicDuration">时间</li> -->
     </ul>
-    <ul class="musicListItem" v-for="(item,index) in 20" :key="index">
-      <li class="musicIndex">0{{index+1}}</li>
+    <ul class="musicListItem" v-for="(item,index) in dataList.data" :key="item.id">
+      <li class="musicIndex">{{index+1}}</li>
       <li class="musicListOperation">
         <svg class="icon musicListIcon" aria-hidden="true">
           <use xlink:href="#icon-dianzanb"></use>
@@ -23,20 +23,31 @@
           <use xlink:href="#icon-xiazai-wenjianxiazai-07"></use>
         </svg>
       </li>
-      <li class="musicTitle">孤勇者</li>
-      <li class="musicAuthor">陈奕迅</li>
-      <li class="musicAlbum">英雄联盟S15主题曲</li>
-      <li class="musicDuration">03:02</li>
+      <li class="musicTitle">{{item.name}}</li>
+      <li class="musicAuthor">
+        <span v-for="(arItem,arIndex) in item.ar" :key="arIndex">{{arItem.name}}</span>
+      </li>
+      <li class="musicAlbum">{{item.tns}}</li>
+      <!-- <li class="musicDuration">{{item.publishTime}}</li> -->
     </ul>
   </div>
 </template>
 <script>
-export default {
+import { defineComponent,toRefs } from "vue"
+export default defineComponent({
   name:"musicList",
-  setup(){
-
+  props:{
+    dataList:Object
+  },
+  setup(props){
+    const {dataList} = toRefs(props)
+    console.log(dataList.value)
+  
+    return {
+      dataList
+    }
   }
-}
+})
 </script>
 
 <style scoped>
@@ -70,6 +81,9 @@ export default {
 }
 .musicAuthor{
   width: 25%;
+}
+.musicAuthor span{
+  margin-right: 6px;
 }
 .musicAlbum{
   width: 20%;

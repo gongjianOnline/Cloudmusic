@@ -66,7 +66,7 @@ export default {
     const personalizedlist = ref([])
     // 跳转到歌单详情
     const handelModuleItem = (item)=>{
-      router.push({name:'songListDetails'})
+      router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
     }
     // 获取轮播banner
     const getCarouselList = async ()=>{

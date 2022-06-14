@@ -8,19 +8,21 @@
     <!-- header -->
     <div class="headerContainer">
       <div class="SLDetailImg">
-        <img src="/img/musicList/musicImg.png" alt="">
+        <img :src="detailList.coverImgUrl" alt="">
       </div>
       <div class="SLDetailInfo">
         <!-- 标题 -->
         <div class="SLDetailInfoTitleContent"> 
           <span class="SLDetailInfoTitleTag">歌单</span>
-          <span class="SLDetailInfoTitleText">听了就很开心的纯音乐</span>
+          <span class="SLDetailInfoTitleText">{{detailList.name}}</span>
         </div>
         <!-- 作者信息 -->
         <div class="authorContainer">
-          <div class="authorLogo"></div>
-          <div class="authorName">新鲜的南瓜粥</div>
-          <div class="authorDate">2017-11-12</div>
+          <div class="authorLogo">
+            <img :src="detailAuthor.data.avatarUrl" alt="">
+          </div>
+          <div class="authorName">{{detailAuthor.data.nickname}}</div>
+          <div class="authorDate">{{detailList.createTime}}</div>
         </div>
         <!-- 一件三联 -->
         <div class="TriplicateContainer">
@@ -69,35 +71,95 @@
         <div class="remarksContainer">
           <div class="remarksItem">
             <span class="remarksItemTitle">标签: </span>
-            <span class="remarksItemTag">学习 / 快乐 / 清新</span>
+            <span class="remarksItemTag">{{detailList.tags}}</span>
           </div>
           <div class="remarksItem">
             <span class="remarksItemTitle">歌曲: </span>
-            <span class="remarksItemValue">134</span>
-            <span class="remarksItemTitle">播放: </span>
-            <span class="remarksItemValue">113万</span>
+            <span class="remarksItemValue">{{detailList.tracksLength}}</span>
           </div>
-          <div class="remarksItem">
-            <span class="remarksItemTitle">简介: </span>
-            <span class="remarksItemValue">当精神被微积分摧残的时候，给耳朵的慰藉</span>
+          <div class="remarksItem overflow">
+            <!-- <span class="remarksItemTitle">简介: </span> -->
+            <span class="remarksItemValue">简介: {{detailList.description}}</span>
           </div> 
         </div>
       </div>
     </div>
     <!-- musicList -->
-    <MusicList></MusicList>
+    <MusicList :dataList="musicList"></MusicList>
   </div>
 </template>
 
 <script>
-import MusicList from "../components/currency/musicList.vue"
+import MusicList from "../components/currency/musicList.vue";
+import { ref,reactive , getCurrentInstance,onMounted } from "vue";
+import { useRouter , useRoute} from 'vue-router'
+import dayjs from "dayjs"
 export default{
   name:"songListDetails",
   components:{
     MusicList
   },
   setup(){
-
+    /**获取全局上下文 */
+    const {proxy} = getCurrentInstance();
+    const $http = proxy.$http;
+    /**路由初始化 */
+    const router = useRouter();
+    const route = useRoute();
+    /**响应式参数声明 */
+    const detailList = ref({});
+    const detailAuthor = reactive({
+      data:[]
+    })
+    const musicList = reactive({data:{}})
+    /**参数持久化 */
+    let routeParams
+    if("item" in route.params){
+      sessionStorage.setItem("musicHeader",route.params.item)
+      routeParams = JSON.parse(route.params.item)
+    }else{
+      routeParams = JSON.parse(sessionStorage.getItem("musicHeader"))
+    }
+    
+    /**接口联调 */
+    // 获取歌单详情
+    const getDetailList = async ()=>{
+      let response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/playlist/detail`,
+        params:{
+          id:routeParams.id
+        }
+      })
+      let res  = response.data.playlist;
+      res.tags = (res.tags).join(" / ");
+      res.tracksLength = res.tracks.length;
+      res.createTime = dayjs(detailList.value.createTime).format('YYYY-MM-DD')
+      // 全部信息
+      detailList.value = response.data.playlist;
+      // 作者信息
+      detailAuthor.data = res.creator;
+      //歌曲列表
+      // 整理专辑标签
+      res.tracks.forEach((item)=>{
+        if(item.tns){
+          item.tns = item.tns.join("")
+        }else{
+          item.tns = ""
+        }
+      })
+      musicList.data = res.tracks;
+    }
+    
+    /**声明周期 */
+    onMounted(()=>{
+      getDetailList()
+    })
+    return {
+      detailList,
+      detailAuthor,
+      musicList
+    }
   }
 }
 </script>
@@ -160,6 +222,11 @@ export default{
   border-radius: 50%;
   background: #ccc;
   margin-right: 10px;
+  overflow: hidden;
+}
+.authorLogo img{
+  width: 100%;
+  height: 100%;
 }
 .authorName{
   height: 26px;
@@ -243,5 +310,12 @@ export default{
 .remarksItemValue{
   color:#676767;
   margin-right: 14px;
+}
+.overflow{
+  overflow : hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 </style>
