@@ -27,8 +27,11 @@
           </svg>
         </span>
         <span class="musicStress">
-          <svg class="icon" aria-hidden="true">
+          <svg class="icon" aria-hidden="true" @click="handelPlay" v-show="!musicInfo.isPaly">
             <use xlink:href="#icon-bofang"></use>
+          </svg>
+          <svg class="icon" aria-hidden="true" @click="handelStop" v-show="musicInfo.isPaly">
+            <use xlink:href="#icon-zanting1"></use>
           </svg>
         </span>
         <span class="musicBtn">
@@ -47,7 +50,7 @@
         <div class="progressItem">
           <el-progress :percentage="10" :show-text="false"/>
         </div>
-        <div class="dateNumber">05:25</div>
+        <div class="dateNumber">{{musicInfo.duration}}</div>
       </div>
     </div>
     <!-- 右边操作 -->
@@ -72,21 +75,46 @@
 </template>
 
 <script>
-import { watchEffect,watch,ref } from "vue";
+import { watchEffect,watch,ref,reactive } from "vue";
 import { useStore } from 'vuex'
+// import dayjs from "dayjs"
+import {showTime} from "../../utils/formatDate.js"
 export default {
   name:"footer",
   setup(){
     /**使用vuex获取音乐URL*/
     const store = useStore()
-    const music = ref("");
-    watch(()=>store.getters.getMusicInfo,(newValue)=>{
-      console.log("footer",newValue)
-      music.value = newValue.url
-      console.log(music.value)
+    const music = reactive({});
+    /**获取音乐播放中的信息 */
+    const musicInfo = reactive({
+      duration:"",
+      isPaly:false,
     })
+    const audioElement = new Audio()
+    watch(()=>store.getters.getMusicInfo,(newValue)=>{
+      console.log(newValue)
+      music.data = newValue
+    })
+    /**播放事件*/
+    const handelPlay = ()=>{
+      musicInfo.isPaly = true;
+      audioElement.src = music.data.url;
+      audioElement.play()
+      // 获取音乐总时长
+      audioElement.oncanplay=()=>{
+        musicInfo.duration = showTime(audioElement.duration)
+      }
+    }
+    const handelStop = ()=>{
+      musicInfo.isPaly = false
+      audioElement.pause()
+    }
 
-    return {}
+    return {
+      musicInfo,
+      handelPlay,
+      handelStop
+    }
   }
 }
 </script>
@@ -165,6 +193,7 @@ export default {
 .dateNumber{
   color: #999;
   font-size:12px;
+  width: 60px;
 }
 .progressItem{
   width: 100%;
