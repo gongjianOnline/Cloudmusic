@@ -46,7 +46,7 @@
         </span>
       </div>
       <div class="dateContainer">
-        <div class="dateNumber">00:29</div>
+        <div class="dateNumber">{{musicInfo.currentTime}}</div>
         <div class="progressItem">
           <el-progress :percentage="10" :show-text="false"/>
         </div>
@@ -89,11 +89,13 @@ export default {
     const musicInfo = reactive({
       duration:"",
       isPaly:false,
+      currentTime:""
     })
-    const audioElement = new Audio()
+    let audioElement = new Audio()
     watch(()=>store.getters.getMusicInfo,(newValue)=>{
-      console.log(newValue)
-      music.data = newValue
+      music.data = newValue;
+      handelStop();
+      audioElement = new Audio();
     })
     /**播放事件*/
     const handelPlay = ()=>{
@@ -102,14 +104,21 @@ export default {
       audioElement.play()
       // 获取音乐总时长
       audioElement.oncanplay=()=>{
-        musicInfo.duration = showTime(audioElement.duration)
+        musicInfo.duration = showTime(audioElement.duration);
+        xxx()
       }
     }
+    /**音乐暂停 */
     const handelStop = ()=>{
       musicInfo.isPaly = false
       audioElement.pause()
     }
-
+    /**定时器执行 */
+    const xxx = ()=>{
+      setInterval(()=>{
+        musicInfo.currentTime = showTime(audioElement.currentTime)
+      },500)
+    }
     return {
       musicInfo,
       handelPlay,
