@@ -7,10 +7,15 @@
   <div class="footerWrapper">
     <!-- 音乐信息 -->
     <div class="musicInfoContainer">
-      <div class="musicImg" @click="xxx"></div>
+      <div class="musicImg">
+        <img :src="musicInfo.musicNews.al.picUrl" alt="">
+      </div>
       <div class="musicInfo">
-        <div class="musicTitle">水星记</div>
-        <div class="musicAuthor">郭顶</div>
+        <div class="musicTitle">{{musicInfo.musicNews.name}}</div>
+        <div class="musicAuthor">
+          <span v-for="(arItem,arIndex) in musicInfo.musicNews.ar"
+            :key="arIndex">{{arItem.name}}</span>
+        </div>
       </div>
     </div>
     <!-- 中间控制器 -->
@@ -89,13 +94,19 @@ export default {
     const musicInfo = reactive({
       duration:"",
       isPaly:false,
-      currentTime:""
+      currentTime:"",
+      musicNews:{}
     })
     let audioElement = new Audio()
     watch(()=>store.getters.getMusicInfo,(newValue)=>{
       music.data = newValue;
       handelStop();
       audioElement = new Audio();
+      handelPlay()
+    })
+    watch(()=>store.getters.getMusicNews,(newValue)=>{
+      console.log("歌曲名称",newValue)
+      musicInfo.musicNews = newValue
     })
     /**播放事件*/
     const handelPlay = ()=>{
@@ -105,7 +116,7 @@ export default {
       // 获取音乐总时长
       audioElement.oncanplay=()=>{
         musicInfo.duration = showTime(audioElement.duration);
-        xxx()
+        currentProgress()
       }
     }
     /**音乐暂停 */
@@ -113,8 +124,8 @@ export default {
       musicInfo.isPaly = false
       audioElement.pause()
     }
-    /**定时器执行 */
-    const xxx = ()=>{
+    /**当前音乐执行进度 */
+    const currentProgress = ()=>{
       setInterval(()=>{
         musicInfo.currentTime = showTime(audioElement.currentTime)
       },500)
@@ -152,6 +163,11 @@ export default {
   height: 50px;
   border-radius: 8px;
   background: #bbb;
+  overflow: hidden;
+}
+.musicImg img{
+  width: 100%;
+  height: 100%;
 }
 .musicInfo{
   margin-left: 14px;
@@ -160,6 +176,16 @@ export default {
   flex-direction: column;
   font-size: 15px;
   color:#333333;
+}
+.musicTitle{
+  font-size: 16px;
+  color: #373737;
+  text-align: left;
+}
+.musicAuthor{
+  font-size: 14px;
+  color: #373737;
+  text-align: left;
 }
 /* 中间音乐操作 */
 .musicOperationContainer{

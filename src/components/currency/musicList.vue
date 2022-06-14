@@ -60,7 +60,8 @@ export default defineComponent({
           id:item.id
         }
       })
-      store.dispatch("setMusicInfo",response.data.data[0])
+      store.dispatch("setMusicInfo",response.data.data[0]);
+      store.dispatch("setMusicNews",item)
     }
   
     return {
