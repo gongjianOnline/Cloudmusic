@@ -7,8 +7,8 @@
   <div>
     <div class="carousel">
       <Splide :options="options">
-        <SplideSlide v-for="(item,index) in carouselList" :key="index">
-          <img :src="item.url" class="carouselImg"/>
+        <SplideSlide v-for="(item) in carouselList" :key="item.encodeId">
+          <img :src="item.imageUrl" class="carouselImg"/>
         </SplideSlide>
       </Splide>
       
@@ -53,29 +53,7 @@ export default {
     // 路由引入
     const router = useRouter();
     // 轮播图片列表
-    const carouselList = reactive([
-      {
-        url: "/img/discoverMusic/1.jpg",
-      },
-      {
-        url: "/img/discoverMusic/2.jpg",
-      },
-      {
-        url: "/img/discoverMusic/3.jpg",
-      },
-      {
-        url: "/img/discoverMusic/4.jpg",
-      },
-      {
-        url: "/img/discoverMusic/5.jpg",
-      },
-      {
-        url: "/img/discoverMusic/6.jpg",
-      },
-      {
-        url: "/img/discoverMusic/7.jpg",
-      },
-    ]);
+    const carouselList = ref([]);
     const options = reactive({
       type:'loop',
       width:"100%",
@@ -90,21 +68,31 @@ export default {
     const handelModuleItem = (item)=>{
       router.push({name:'songListDetails'})
     }
+    // 获取轮播banner
+    const getCarouselList = async ()=>{
+      let response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/banner`,
+        params:{
+          type:0
+        }
+      })
+      console.log("获取轮播",response)
+      carouselList.value = response.data.banners;
+    }
+
     // 获取歌单
     const getResourceList =async ()=>{
-      console.log($http)
       let response = await proxy.$axios({
         method:"get",
         url:`${$http}/personalized`,
       })
       personalizedlist.value = response.data.result;
-      console.log(response)
-      console.log(personalizedlist)
     }
 
     onMounted(()=>{
-      console.log("1411")
       getResourceList()
+      getCarouselList()
     })
     return {
       carouselList,
