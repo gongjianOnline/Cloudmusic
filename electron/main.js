@@ -2,6 +2,8 @@ const {app,BrowserWindow,ipcMain} = require("electron");
 const path = require("path");
 const NODE_ENV = process.env.NODE_ENV;
 let mainWindow;
+/**业务变量 */
+let musicInfo = null; // 音乐的URL的信息,类型为object
 /**窗口实例封装 */
 class AppWindow extends BrowserWindow{
   constructor(config,fileLocation){

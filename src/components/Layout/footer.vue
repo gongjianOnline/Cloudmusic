@@ -7,7 +7,7 @@
   <div class="footerWrapper">
     <!-- 音乐信息 -->
     <div class="musicInfoContainer">
-      <div class="musicImg"></div>
+      <div class="musicImg" @click="xxx"></div>
       <div class="musicInfo">
         <div class="musicTitle">水星记</div>
         <div class="musicAuthor">郭顶</div>
@@ -72,10 +72,21 @@
 </template>
 
 <script>
+import { watchEffect,watch,ref } from "vue";
+import { useStore } from 'vuex'
 export default {
   name:"footer",
-  super(){
-    
+  setup(){
+    /**使用vuex获取音乐URL*/
+    const store = useStore()
+    const music = ref("");
+    watch(()=>store.getters.getMusicInfo,(newValue)=>{
+      console.log("footer",newValue)
+      music.value = newValue.url
+      console.log(music.value)
+    })
+
+    return {}
   }
 }
 </script>
@@ -91,6 +102,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  -webkit-app-region: no-drag;
 }
 /* 左边音乐信息 */
 .musicInfoContainer{

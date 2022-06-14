@@ -13,7 +13,10 @@
       <li class="musicAlbum">专辑</li>
       <!-- <li class="musicDuration">时间</li> -->
     </ul>
-    <ul class="musicListItem" v-for="(item,index) in dataList.data" :key="item.id">
+    <ul class="musicListItem" 
+      v-for="(item,index) in dataList.data" 
+      :key="item.id"
+      @dblclick="handelMusicClick(item)">
       <li class="musicIndex">{{index+1}}</li>
       <li class="musicListOperation">
         <svg class="icon musicListIcon" aria-hidden="true">
@@ -33,18 +36,36 @@
   </div>
 </template>
 <script>
-import { defineComponent,toRefs } from "vue"
+import { defineComponent,toRefs,getCurrentInstance} from "vue";
+import { useStore } from 'vuex'
 export default defineComponent({
   name:"musicList",
   props:{
     dataList:Object
   },
   setup(props){
+    /**全局上下文 */
+    const {proxy} = getCurrentInstance();
+    const $http = proxy.$http
+    const store = useStore()
+
     const {dataList} = toRefs(props)
-    console.log(dataList.value)
+    /*页面业务方法 */
+    // 点击当前音乐项
+    const handelMusicClick = async (item)=>{
+      let response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/song/url`,
+        params:{
+          id:item.id
+        }
+      })
+      store.dispatch("setMusicInfo",response.data.data[0])
+    }
   
     return {
-      dataList
+      dataList,
+      handelMusicClick
     }
   }
 })
