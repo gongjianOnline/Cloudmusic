@@ -77,7 +77,6 @@ export default {
           type:0
         }
       })
-      console.log("获取轮播",response)
       carouselList.value = response.data.banners;
     }
 
