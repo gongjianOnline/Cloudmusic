@@ -62,16 +62,32 @@
     </div>
     <!-- 右边操作 -->
     <div class="extendContainer">
+      <!-- 音效模块 -->
       <span style="margin-left:0">
         <svg class="icon extendIcon" aria-hidden="true">
           <use xlink:href="#icon-yinxiao"></use>
         </svg>
       </span>
+      <!-- 音量滑块 -->
       <span>
-        <svg class="icon extendIcon" aria-hidden="true">
-          <use xlink:href="#icon-yinliang"></use>
-        </svg>
+        <el-popover placement="top" :width="50" trigger="click">
+          <template #reference>
+            <svg class="icon extendIcon" aria-hidden="true">
+              <use xlink:href="#icon-yinliang"></use>
+            </svg>
+          </template>
+          <div class="voiceContainer">
+            <div class="voiceContent">
+              <el-slider v-model="musicInfo.voiceValue" 
+                vertical 
+                height="80px"
+                @input="handelVoice"
+                size="small"/>
+            </div>
+          </div>
+        </el-popover>
       </span>
+      <!-- 音乐列表Icon -->
       <span>
         <svg class="icon extendIcon" aria-hidden="true">
           <use xlink:href="#icon-liebiao"></use>
@@ -102,7 +118,8 @@ export default {
         al:{picUrl:""},
         ar:{}
       },
-      progress:0
+      progress:0,
+      voiceValue:40, // 音量
     })
     let audioElement = new Audio();
     //定时器变量
@@ -137,14 +154,11 @@ export default {
         musicInfo.progress = Math.abs(Math.abs(Math.abs((total-current)/total)*100)-100).toFixed(2)
       },1000)
     }
-    // 播放结束时触发
-    audioElement.onended = ()=>{
-      console.log("播放结束")
-      clearInterval(timer.value)
-      musicInfo.progress = 0
+    // 监听声音大小
+    const handelVoice = ()=>{
+      audioElement.volume = (musicInfo.voiceValue) / 100;
     }
-
-
+    
     // 监听vuex中数据变化
     watch(()=>store.getters.getMusicInfo,(newValue)=>{
       music.data = newValue;
@@ -160,11 +174,19 @@ export default {
     return {
       musicInfo,
       handelPlay,
-      handelStop
+      handelStop,
+      handelVoice
     }
   }
 }
 </script>
+
+<style>
+  .el-popover.el-popper{
+    min-width: 0px;
+    padding: 0px;
+  }
+</style>
 
 <style scoped>
 .footerWrapper{
@@ -279,6 +301,18 @@ export default {
 .extendIcon{
   width: 20px;
   height: 20px;
+}
+/**声音调整 */
+.voiceContainer{
+  height: 120px;
+  position: relative;
+}
+.voiceContent{
+  position: absolute;
+  left: 50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+
 }
 
 
