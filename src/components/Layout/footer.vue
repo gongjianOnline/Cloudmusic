@@ -31,11 +31,13 @@
             <use xlink:href="#icon-shangyishou"></use>
           </svg>
         </span>
-        <span class="musicStress">
-          <svg class="icon" aria-hidden="true" @click="handelPlay" v-show="!musicInfo.isPaly">
+        <span class="musicStress" v-show="!musicInfo.isPaly">
+          <svg class="icon" aria-hidden="true" @click="handelPlay">
             <use xlink:href="#icon-bofang"></use>
           </svg>
-          <svg class="icon" aria-hidden="true" @click="handelStop" v-show="musicInfo.isPaly">
+        </span>
+        <span class="musicStress" v-show="musicInfo.isPaly">
+          <svg class="icon" aria-hidden="true" @click="handelStop">
             <use xlink:href="#icon-zanting1"></use>
           </svg>
         </span>
@@ -53,7 +55,7 @@
       <div class="dateContainer">
         <div class="dateNumber">{{musicInfo.currentTime}}</div>
         <div class="progressItem">
-          <el-progress :percentage="10" :show-text="false"/>
+          <el-progress :percentage="musicInfo.progress" percentage :show-text="false"/>
         </div>
         <div class="dateNumber">{{musicInfo.duration}}</div>
       </div>
@@ -90,25 +92,24 @@ export default {
     /**使用vuex获取音乐URL*/
     const store = useStore()
     const music = reactive({});
-    /**获取音乐播放中的信息 */
+    /**变量声明 */
+    //获取音乐播放中的信息
     const musicInfo = reactive({
       duration:"",
       isPaly:false,
       currentTime:"",
-      musicNews:{}
+      musicNews:{
+        al:{picUrl:""},
+        ar:{}
+      },
+      progress:0
     })
-    let audioElement = new Audio()
-    watch(()=>store.getters.getMusicInfo,(newValue)=>{
-      music.data = newValue;
-      handelStop();
-      audioElement = new Audio();
-      handelPlay()
-    })
-    watch(()=>store.getters.getMusicNews,(newValue)=>{
-      console.log("歌曲名称",newValue)
-      musicInfo.musicNews = newValue
-    })
-    /**播放事件*/
+    let audioElement = new Audio();
+    //定时器变量
+    let timer = ref(null);
+
+    /**事件声明区 */
+    //播放事件
     const handelPlay = ()=>{
       musicInfo.isPaly = true;
       audioElement.src = music.data.url;
@@ -119,17 +120,43 @@ export default {
         currentProgress()
       }
     }
-    /**音乐暂停 */
+    //音乐暂停
     const handelStop = ()=>{
       musicInfo.isPaly = false
       audioElement.pause()
+      clearInterval(timer.value)
+      musicInfo.progress = 0
     }
-    /**当前音乐执行进度 */
+    //当前音乐执行进度
     const currentProgress = ()=>{
-      setInterval(()=>{
+      timer.value = setInterval(()=>{
         musicInfo.currentTime = showTime(audioElement.currentTime)
-      },500)
+        // 计算进度条当前位置
+        let current = Number.parseInt(audioElement.currentTime);
+        let total = Number.parseInt(audioElement.duration);
+        musicInfo.progress = Math.abs(Math.abs(Math.abs((total-current)/total)*100)-100).toFixed(2)
+      },1000)
     }
+    // 播放结束时触发
+    audioElement.onended = ()=>{
+      console.log("播放结束")
+      clearInterval(timer.value)
+      musicInfo.progress = 0
+    }
+
+
+    // 监听vuex中数据变化
+    watch(()=>store.getters.getMusicInfo,(newValue)=>{
+      music.data = newValue;
+      handelStop();
+      audioElement = new Audio();
+      handelPlay()
+    })
+    watch(()=>store.getters.getMusicNews,(newValue)=>{
+      musicInfo.musicNews = newValue
+    })
+    
+    
     return {
       musicInfo,
       handelPlay,
@@ -154,9 +181,11 @@ export default {
 }
 /* 左边音乐信息 */
 .musicInfoContainer{
+  width: 180px;
   margin-left: 14px;
   display: flex;
-  
+  overflow: hidden;
+
 }
 .musicImg{
   width: 50px;
