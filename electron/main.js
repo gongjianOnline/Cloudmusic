@@ -2,6 +2,7 @@ const {app,BrowserWindow,ipcMain} = require("electron");
 const path = require("path");
 const NODE_ENV = process.env.NODE_ENV;
 let mainWindow;
+let loginWindow;
 /**业务变量 */
 let musicInfo = null; // 音乐的URL的信息,类型为object
 /**窗口实例封装 */
@@ -68,8 +69,7 @@ ipcMain.on("closeWindow",(event,arg)=>{
 
 /*主线程通信开启登录新窗口 */
 ipcMain.on("LoginBUS",(event,arg)=>{
-  console.log("开启新窗口")
-  const loginWindow = new AppWindow({
+  loginWindow = new AppWindow({
     width:352,
     height:533,
     minWidth:352,
@@ -77,7 +77,15 @@ ipcMain.on("LoginBUS",(event,arg)=>{
     titleBarStyle:"hidden",
     parent:mainWindow
   },{
-    dev:"http://localhost:3000/login",
+    dev:"http://localhost:3000/#login",
     pro:"../dist/index.html#login"
   })
+})
+// 登录窗口关闭线程通信
+ipcMain.on("LoginClose",(event,arg)=>{
+  loginWindow.close()
+})
+// 登录窗口信息传递(渲染进程之间通信)
+ipcMain.on("userInfo",(event,arg)=>{ 
+  mainWindow.webContents.send("mainUserInfo",arg)
 })

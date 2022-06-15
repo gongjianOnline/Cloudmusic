@@ -32,11 +32,13 @@
       <div class="operationContainer">
         <div class="userInfoCenter" @click="handelLogin">
           <div class="userLogo">
-            <svg class="icon userIcon" aria-hidden="true">
+            <svg class="icon userIcon" aria-hidden="true" v-show="!userInfo.data.token">
               <use xlink:href="#icon-yonghu"></use>
             </svg>
+            <img :src="userInfo.data.profile.avatarUrl" alt="" v-show="userInfo.data.token">
           </div>
-          <div class="userName">未登录</div>
+          <div class="userName" v-show="userInfo.data.token">{{userInfo.data.profile.nickname}}</div>
+          <div class="userName" v-show="!userInfo.data.token">未登录</div>
           <div class="splitContent"></div>
         </div>
         <div class="operationContent">
@@ -68,16 +70,31 @@
 </template>
 
 <script>
-import {ref} from "vue";
-import {useRouter} from "vue-router"
+import {ref,reactive,watch,onMounted} from "vue";
+import {useRouter} from "vue-router";
+import { useStore } from 'vuex';
 const {ipcRenderer} = require("electron");
 export default{
   name:"header",
   setup(){
+    const store = useStore()
     /**路由声明 */
     const route = useRouter()
     /**数据集合 */
-    const windowState = ref(false)
+    // 窗口图标变化状态
+    const windowState = ref(false);
+    // 用户信息
+    const userInfo = reactive({
+      data:{
+        token:"",
+        profile:{
+          avatarUrl:"",
+          nickname:""
+        }
+      }
+    })
+
+    /**主线程监听 */
     // 监听隐藏按钮
     const handelHideWindow = ()=>{
       ipcRenderer.send("hideWindow","")
@@ -94,11 +111,13 @@ export default{
     const handelCloseWindow = ()=>{
       ipcRenderer.send("closeWindow","")
     }
-    /**监听窗口变化状态 */
+    //监听窗口变化状态
     ipcRenderer.on("isMaxWindow",(event,arg)=>{
       windowState.value = arg
     })
-    /*监听路由前进后退*/
+
+    /**页面业务方法 */
+    //监听路由前进后退
     const handelHistory = (type)=>{
       if(type === "back"){
         route.go(-1)
@@ -106,12 +125,30 @@ export default{
         route.go(1)
       }
     }
-    /**登录接口主线程通信 */
+    //登录接口主线程通信
     const handelLogin = ()=>{
       ipcRenderer.send("LoginBUS","")
     }
+    // 登录信息监听
+    ipcRenderer.on("mainUserInfo",function(e,data){
+      userInfo.data = data
+      localStorage.setItem("userInfo",JSON.stringify(data))
+    })
+    
+
+    
+    
+    // 页面加载时出发
+    onMounted(()=>{
+      let StorUserInfo = JSON.parse(localStorage.getItem("userInfo"))
+      if(StorUserInfo){
+        userInfo.data = StorUserInfo
+      }
+    })
+
     return{
       windowState,
+      userInfo,
       handelHideWindow,
       handelMaxWindow,
       handelRestoreWindow,
@@ -154,6 +191,7 @@ export default{
   align-items: center;
   background:url("../img/header/logo.png");
   background-position: 0px -6px !important;
+  -webkit-app-region: no-drag;
 }
 /* 历史切换 */
 .historyContainer{
@@ -244,6 +282,10 @@ export default{
   background: rgba(255,255,255,0.4);
   border-radius: 50%;
   line-height: 40px;
+  overflow: hidden;
+}
+.userLogo img{
+  width: 100%;
 }
 .userIcon{
   width: 24px;
