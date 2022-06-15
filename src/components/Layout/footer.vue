@@ -31,13 +31,13 @@
             <use xlink:href="#icon-shangyishou"></use>
           </svg>
         </span>
-        <span class="musicStress" v-show="!musicInfo.isPaly">
-          <svg class="icon" aria-hidden="true" @click="handelPlay">
+        <span class="musicStress" @click="handelPlay" v-show="!musicInfo.isPaly">
+          <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-bofang"></use>
           </svg>
         </span>
-        <span class="musicStress" v-show="musicInfo.isPaly">
-          <svg class="icon" aria-hidden="true" @click="handelStop">
+        <span class="musicStress" @click="handelStop" v-show="musicInfo.isPaly">
+          <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-zanting1"></use>
           </svg>
         </span>
@@ -98,13 +98,15 @@
 </template>
 
 <script>
-import { watchEffect,watch,ref,reactive } from "vue";
+import { watch,ref,reactive,getCurrentInstance } from "vue";
 import { useStore } from 'vuex'
-// import dayjs from "dayjs"
 import {showTime} from "../../utils/formatDate.js"
 export default {
   name:"footer",
   setup(){
+    /**获取全局上下文 */
+    const {proxy} = getCurrentInstance();
+    const $http = proxy.$http;
     /**使用vuex获取音乐URL*/
     const store = useStore()
     const music = reactive({});
@@ -121,19 +123,40 @@ export default {
       progress:0,
       voiceValue:40, // 音量
     })
-    let audioElement = new Audio();
+    let audioElement = null;
     //定时器变量
     let timer = ref(null);
 
+    /**接口调用 */
+    const getMusicUrl = async (id)=>{
+      let response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/song/url`,
+        params:{
+          id:id
+        }
+      })
+      let res = response.data.data[0];
+      musicConfig(res.url)
+    }
+
     /**事件声明区 */
+    // 初始化音乐配置
+    const musicConfig = (url)=>{
+      musicInfo.isPaly = true;
+      audioElement.src = url;
+      handelPlay()
+    }
     //播放事件
     const handelPlay = ()=>{
       musicInfo.isPaly = true;
-      audioElement.src = music.data.url;
       audioElement.play()
       // 获取音乐总时长
       audioElement.oncanplay=()=>{
         musicInfo.duration = showTime(audioElement.duration);
+        if(timer.value){
+          clearInterval(timer.value)
+        }
         currentProgress()
       }
     }
@@ -141,8 +164,6 @@ export default {
     const handelStop = ()=>{
       musicInfo.isPaly = false
       audioElement.pause()
-      clearInterval(timer.value)
-      musicInfo.progress = 0
     }
     //当前音乐执行进度
     const currentProgress = ()=>{
@@ -160,13 +181,12 @@ export default {
     }
     
     // 监听vuex中数据变化
-    watch(()=>store.getters.getMusicInfo,(newValue)=>{
-      music.data = newValue;
-      handelStop();
-      audioElement = new Audio();
-      handelPlay()
-    })
     watch(()=>store.getters.getMusicNews,(newValue)=>{
+      if(audioElement){
+        handelStop()
+      }
+      audioElement = new Audio();
+      getMusicUrl(newValue.id)
       musicInfo.musicNews = newValue
     })
     

@@ -51,16 +51,8 @@ export default defineComponent({
 
     const {dataList} = toRefs(props)
     /*页面业务方法 */
-    // 点击当前音乐项
+    // 点击当前音乐项,将id存入vuex:setMusicInfo中
     const handelMusicClick = async (item)=>{
-      let response = await proxy.$axios({
-        method:"get",
-        url:`${$http}/song/url`,
-        params:{
-          id:item.id
-        }
-      })
-      store.dispatch("setMusicInfo",response.data.data[0]);
       store.dispatch("setMusicNews",item)
     }
   
