@@ -14,15 +14,15 @@ class AppWindow extends BrowserWindow{
       webPreferences:{
         nodeIntegration:true,
         contextIsolation: false,
-        // webSecurity:false, // 允许跨域
+        webSecurity:false, // 允许跨域
       }
     }
     const finalConfig = {...basicConfig,...config}
     super(finalConfig)
     this.loadURL(
       NODE_ENV === "development"?
-      "http://localhost:3000":
-      `file://${path.join(__dirname,"../dist/index.html")}`
+      fileLocation.dev:
+      `file://${path.join(__dirname,fileLocation.pro)}`
     )
     // 打开开发控制台
     if(NODE_ENV === "development"){
@@ -39,6 +39,9 @@ app.on("ready",()=>{
     height:600,
     autoHideMenuBar : true,
     titleBarStyle:"hidden",
+  },{
+    dev:"http://localhost:3000",
+    pro:"../dist/index.html"
   })
 })
 
@@ -61,4 +64,20 @@ ipcMain.on("restoreWindow",(event,arg)=>{
 /**主线程通信监听窗口关闭 */
 ipcMain.on("closeWindow",(event,arg)=>{
   app.quit()
+})
+
+/*主线程通信开启登录新窗口 */
+ipcMain.on("LoginBUS",(event,arg)=>{
+  console.log("开启新窗口")
+  const loginWindow = new AppWindow({
+    width:352,
+    height:533,
+    minWidth:352,
+    autoHideMenuBar : true,
+    titleBarStyle:"hidden",
+    parent:mainWindow
+  },{
+    dev:"http://localhost:3000/login",
+    pro:"../dist/index.html#login"
+  })
 })

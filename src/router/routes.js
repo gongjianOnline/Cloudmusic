@@ -56,6 +56,12 @@ const routes = [
           component: () => import('../views/songListDetails.vue'), 
         },
       ]
-  }
+  },
+  {
+    path: '/login',
+    name:"login",
+    title:"登录",
+    component: () => import('../views/login.vue'), 
+  },
 ]
 export default routes

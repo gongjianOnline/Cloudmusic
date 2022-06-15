@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="operationContainer">
-        <div class="userInfoCenter">
+        <div class="userInfoCenter" @click="handelLogin">
           <div class="userLogo">
             <svg class="icon userIcon" aria-hidden="true">
               <use xlink:href="#icon-yonghu"></use>
@@ -106,13 +106,18 @@ export default{
         route.go(1)
       }
     }
+    /**登录接口主线程通信 */
+    const handelLogin = ()=>{
+      ipcRenderer.send("LoginBUS","")
+    }
     return{
       windowState,
       handelHideWindow,
       handelMaxWindow,
       handelRestoreWindow,
       handelCloseWindow,
-      handelHistory
+      handelHistory,
+      handelLogin
     }
   }
 }
@@ -147,7 +152,7 @@ export default{
   display: flex;
   justify-content: center;
   align-items: center;
-  background:url("/img/header/logo.png");
+  background:url("../img/header/logo.png");
   background-position: 0px -6px !important;
 }
 /* 历史切换 */

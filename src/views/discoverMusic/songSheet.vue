@@ -187,7 +187,7 @@ export default{
   margin: 0 auto;
   display: flex;
   align-items: center;
-  background-image: url("/img/songSheet/logo.png");
+  background-image: url("../img/songSheet/logo.png");
   background-size: 100% 100%;
   overflow: hidden;
   position: relative;
