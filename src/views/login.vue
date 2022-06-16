@@ -7,7 +7,7 @@
   <div class="loginWrapper">
     <div class="codeContainer">
       <div></div>
-      <div class="closeContent" @click="handelLoginClose">
+      <div class="closeContent">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-guanbi"></use>
         </svg>
@@ -48,6 +48,7 @@
 <script>
 import {ref,reactive,getCurrentInstance} from "vue";
 import { useStore } from 'vuex'
+import { ElMessage } from 'element-plus'
 const {ipcRenderer} = require("electron");
 
 export default{
@@ -78,17 +79,27 @@ export default{
           phone:formData.phoneNumber,
           password:formData.password
         }
-      })
+      }).catch((err)=>{{
+        ElMessage.error('账户不存在')
+        return
+      }})
+      if(response.data.code === 400){
+        ElMessage.error('登录失败,请验证账户密码是否正确')
+        return 
+      }else if(response.data.code === 502){
+        ElMessage.error('密码错误')
+        return
+      }else if(response.data.code === 501){
+        ElMessage.error('用户不存在')
+        return
+      }
       ipcRenderer.send("userInfo",response.data)
     } 
-
     return {
       formData,
       handelLoginClose,
       handelLogin
     }
-
-
   }
 }
 </script>
@@ -194,5 +205,6 @@ input:focus{
   justify-content: center;
   align-items: center;
   background: #ea4848;
+  cursor: pointer;
 }
 </style>

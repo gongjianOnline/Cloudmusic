@@ -85,7 +85,8 @@ ipcMain.on("LoginBUS",(event,arg)=>{
 ipcMain.on("LoginClose",(event,arg)=>{
   loginWindow.close()
 })
-// 登录窗口信息传递(渲染进程之间通信)
+// 登录窗口信息传递(渲染进程之间通信)-- 当登录信息获取是关闭登录子窗口
 ipcMain.on("userInfo",(event,arg)=>{ 
+  loginWindow.close()
   mainWindow.webContents.send("mainUserInfo",arg)
 })

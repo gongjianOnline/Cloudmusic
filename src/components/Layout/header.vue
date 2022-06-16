@@ -7,7 +7,7 @@
     <!-- 顶部 -->
     <div class="headerContainer">
       <div class="headerLeft">
-        <div class="LogoContainer"></div>
+        <div class="LogoContainer" @click="inspectLogin"></div>
         <div class="historyContainer">
           <div @click="handelHistory('back')">
             <svg class="icon historyIcon backIcon" aria-hidden="true">
@@ -30,17 +30,42 @@
         </div>
       </div>
       <div class="operationContainer">
-        <div class="userInfoCenter" @click="handelLogin">
+        <!-- 未登录 -->
+        <div class="userInfoCenter" v-show="!userInfo.data.token"  @click="handelLogin">
           <div class="userLogo">
-            <svg class="icon userIcon" aria-hidden="true" v-show="!userInfo.data.token">
+            <svg class="icon userIcon" aria-hidden="true">
               <use xlink:href="#icon-yonghu"></use>
             </svg>
-            <img :src="userInfo.data.profile.avatarUrl" alt="" v-show="userInfo.data.token">
           </div>
-          <div class="userName" v-show="userInfo.data.token">{{userInfo.data.profile.nickname}}</div>
-          <div class="userName" v-show="!userInfo.data.token">未登录</div>
+          <div class="userName" >未登录</div>
           <div class="splitContent"></div>
         </div>
+        <!-- 已登录用户操作模块 -->
+        <el-popover placement="bottom" :width="280 " trigger="click">
+          <template #reference>
+            <div class="userInfoCenter" v-show="userInfo.data.token">
+              <div class="userLogo">
+                <img :src="userInfo.data.profile.avatarUrl" alt="" >
+              </div>
+              <div class="userName">{{userInfo.data.profile.nickname}}</div>
+              <div class="splitContent"></div>
+            </div>
+          </template>
+          <div class="userOperation">
+            <div class="userOperationBtn">
+              <div class="userOperationContent" @click="handelLogout">
+                <span>
+                  <svg class="icon userOperationIcon" aria-hidden="true">
+                    <use xlink:href="#icon-guanbi1"></use>
+                  </svg>
+                </span>
+                <span>退出登录</span>
+              </div>
+            </div>
+          </div>
+        </el-popover>
+        
+        <!-- 视口操作 -->
         <div class="operationContent">
           <div class="operationBtn" @click="handelHideWindow">
             <svg class="icon" aria-hidden="true">
@@ -70,13 +95,15 @@
 </template>
 
 <script>
-import {ref,reactive,watch,onMounted} from "vue";
+import {ref,reactive,watch,onMounted,getCurrentInstance} from "vue";
 import {useRouter} from "vue-router";
 import { useStore } from 'vuex';
 const {ipcRenderer} = require("electron");
 export default{
   name:"header",
   setup(){
+    const {proxy} = getCurrentInstance();
+    const $http = proxy.$http;
     const store = useStore()
     /**路由声明 */
     const route = useRouter()
@@ -132,18 +159,38 @@ export default{
     // 登录信息监听
     ipcRenderer.on("mainUserInfo",function(e,data){
       userInfo.data = data
-      localStorage.setItem("userInfo",JSON.stringify(data))
     })
-    
+    // 检查登录状态
+    const inspectLogin = async ()=>{
+      let response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/login/status`
+      })
+      if(response.data.data.profile){
+        userInfo.data.token = "已登录";
+        userInfo.data.profile = response.data.data.profile;
+      }else{
+        userInfo.data.token = "";
+      }
+      console.log(response.data.data)
+      
+    }
+    // 退出登录
+    const handelLogout = async()=>{
+      let response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/logout`
+      })
+      if(response.data.code === 200){
+        inspectLogin()
+      }
+    }
 
     
     
     // 页面加载时出发
     onMounted(()=>{
-      let StorUserInfo = JSON.parse(localStorage.getItem("userInfo"))
-      if(StorUserInfo){
-        userInfo.data = StorUserInfo
-      }
+      inspectLogin()
     })
 
     return{
@@ -154,7 +201,9 @@ export default{
       handelRestoreWindow,
       handelCloseWindow,
       handelHistory,
-      handelLogin
+      handelLogin,
+      handelLogout,
+      inspectLogin
     }
   }
 }
@@ -164,7 +213,7 @@ export default{
 
 <style scoped>
 .icon{
-  fill:#fff !important
+  fill:#fff
 }
 .headerContainer{
   width: 100%;
@@ -275,6 +324,7 @@ export default{
   display: flex;
   align-items: center;
   cursor: pointer;
+  margin-right: 40px;
 }
 .userLogo{
   width: 30px;
@@ -301,7 +351,38 @@ export default{
   height: 20px;
   background: #fff;
   opacity: 0.5;
-  margin-left: 6px;
+  margin-left: 12px;
+}
+/* 登录状态下的用户操作 */
+.userOperation{
+  padding: 17px;
+}
+.userOperationBtn{
+  padding: 14px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top:1px solid #eeeeee;
+  cursor: pointer;
+}
+.userOperationContent{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.userOperationContent span{
+  display: block;
+  color:#333333;
+  font-size: 14px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+}
+.userOperationIcon{
+  width: 18px;
+  height: 18px;
+  fill:#333;
+
 }
 
 </style>
