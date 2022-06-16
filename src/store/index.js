@@ -4,6 +4,7 @@ export default createStore({
   state: {
     MusicNews:{}, // 音乐名称等信息
     currentState:false,// 当前列表菜单栏是否显示
+    songList:[], // 当前音乐列表
   },
   mutations: {
     mutations_MusicNews:(state,payload)=>{
@@ -12,7 +13,10 @@ export default createStore({
     mutations_currentState:(state,payload)=>{
       state.currentState = payload
     },
-  
+    mutations_songList:(state,payload)=>{
+      /**payload为数组 */
+      state.songList = state.songList.concat(payload)
+    }
   },
   actions: {
     setMusicNews:(store,args)=>{
@@ -21,7 +25,9 @@ export default createStore({
     setCurrentState:(store,args)=>{
       store.commit("mutations_currentState",args)
     },
-    
+    setSongList:(store,args)=>{
+      store.commit("mutations_songList",args)
+    }
   },
   getters: {
     getMusicNews:(state)=>{
@@ -29,6 +35,9 @@ export default createStore({
     },
     getCurrentState:(state)=>{
       return state.currentState
+    },
+    getSongList:(state)=>{
+      return state.songList
     }
   }
 })

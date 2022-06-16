@@ -26,7 +26,7 @@
         </div>
         <!-- 一件三联 -->
         <div class="TriplicateContainer">
-          <div class="playAll">
+          <div class="playAll" @click="handelPlayAll">
             <span>
               <svg class="icon playAllIcon" aria-hidden="true">
                 <use xlink:href="#icon-bofang"></use>
@@ -93,6 +93,7 @@
 import MusicList from "../components/currency/musicList.vue";
 import { ref,reactive , getCurrentInstance,onMounted } from "vue";
 import { useRouter , useRoute} from 'vue-router'
+import { useStore } from 'vuex'
 import dayjs from "dayjs"
 export default{
   name:"songListDetails",
@@ -103,6 +104,7 @@ export default{
     /**获取全局上下文 */
     const {proxy} = getCurrentInstance();
     const $http = proxy.$http;
+    const store = useStore();
     /**路由初始化 */
     const router = useRouter();
     const route = useRoute();
@@ -112,7 +114,7 @@ export default{
       data:[]
     })
     const musicList = reactive({data:{}})
-    /**参数持久化 */
+    /**参数持久化路由传递的参数（歌单信息） */
     let routeParams
     if("item" in route.params){
       sessionStorage.setItem("musicHeader",route.params.item)
@@ -147,8 +149,23 @@ export default{
         }else{
           item.tns = ""
         }
+        // 音乐时长转换
+        item.dt = dayjs(item.dt).format('mm:ss')
+        // 作者格式调整对象转换成数组
+        item.ars = []
+        item.ar.forEach((arItem)=>{
+          item.ars.push(arItem.name)
+        })
+        item.ars = item.ars.join(" ")
       })
       musicList.data = res.tracks;
+    }
+
+    /**事件声明 */
+    // 播放全部的时候向当前音乐数组追加全部音乐列表
+    const handelPlayAll = ()=>{
+      // console.log(musicList.data)
+      store.dispatch("setSongList",musicList.data)
     }
     
     /**声明周期 */
@@ -158,7 +175,8 @@ export default{
     return {
       detailList,
       detailAuthor,
-      musicList
+      musicList,
+      handelPlayAll
     }
   }
 }

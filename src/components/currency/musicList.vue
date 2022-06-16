@@ -11,7 +11,7 @@
       <li class="musicTitle">标题</li>
       <li class="musicAuthor">歌手</li>
       <li class="musicAlbum">专辑</li>
-      <!-- <li class="musicDuration">时间</li> -->
+      <li class="musicDuration">时间</li>
     </ul>
     <ul class="musicListItem" 
       v-for="(item,index) in dataList.data" 
@@ -27,11 +27,9 @@
         </svg>
       </li>
       <li class="musicTitle">{{item.name}}</li>
-      <li class="musicAuthor">
-        <span v-for="(arItem,arIndex) in item.ar" :key="arIndex">{{arItem.name}}</span>
-      </li>
+      <li class="musicAuthor">{{item.ars}}</li>
       <li class="musicAlbum">{{item.tns}}</li>
-      <!-- <li class="musicDuration">{{item.publishTime}}</li> -->
+      <li class="musicDuration">{{item.dt}}</li>
     </ul>
   </div>
 </template>
@@ -53,7 +51,10 @@ export default defineComponent({
     /*页面业务方法 */
     // 点击当前音乐项,将id存入vuex:setMusicInfo中
     const handelMusicClick = async (item)=>{
+      // 向播放器发送歌曲信息
       store.dispatch("setMusicNews",item)
+      // 向音乐列表队列中添加歌曲信息
+      store.dispatch("setSongList",[item])
     }
   
     return {
@@ -92,12 +93,17 @@ export default defineComponent({
 .musicTitle{
   width: 30%;
   color:#363636;
+  text-align: left; 
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 .musicAuthor{
   width: 25%;
-}
-.musicAuthor span{
-  margin-right: 6px;
+  text-align: left; 
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 .musicAlbum{
   width: 20%;
