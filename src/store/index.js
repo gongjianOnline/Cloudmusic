@@ -4,7 +4,7 @@ export default createStore({
   state: {
     MusicNews:{}, // 音乐名称等信息
     currentState:false,// 当前列表菜单栏是否显示
-    songList:[], // 当前音乐列表
+    songList:JSON.parse(localStorage.getItem("currentListData"))||[], // 当前音乐列表
   },
   mutations: {
     mutations_MusicNews:(state,payload)=>{
