@@ -25,9 +25,9 @@
       <!-- 中间控制器 -->
       <div class="musicOperationContainer">
         <div class="musicController">
-          <span class="musicBtn">
-            <svg class="icon iconHover" aria-hidden="true">
-              <use xlink:href="#icon-liebiaoxunhuan"></use>
+          <span class="musicBtn" @click="handelLoopClick">
+            <svg class="icon loopIcon iconHover" aria-hidden="true">
+              <use v-bind:xlink:href="loopTypeItem.data.icon"></use>
             </svg>
           </span>
           <span class="musicBtn" @click="handelDirection('back')">
@@ -144,7 +144,23 @@ export default {
     let audioElement = null;
     //定时器变量
     let timer = ref(null);
-
+    //循环类型选项
+    const loopType = reactive([
+      {
+        icon:"#icon-24gl-repeatOnce2",
+        id:"0"
+      },
+      {
+        icon:"#icon-liebiaoxunhuan",
+        id:"1"
+      }
+    ])
+    const loopTypeItem = reactive({
+      data:{
+        icon:"#icon-24gl-repeatOnce2",
+        id:"0"
+      }
+    })
     /**接口调用 */
     const getMusicUrl = async (id) => {
       let response = await proxy.$axios({
@@ -233,6 +249,20 @@ export default {
         }
       }
     };
+    // 切换循环类型
+    const handelLoopClick = ()=>{
+      let loopIconIndex = 0;
+      for(let i = 0;i<loopType.length;i++){
+      if(loopType[i].id === loopTypeItem.data.id){
+          loopIconIndex = i;
+        }
+      }
+      if(loopIconIndex >= loopType.length-1){
+        loopTypeItem.data = loopType[0]
+      }else{
+        loopTypeItem.data = loopType[loopIconIndex+1]
+      }
+    }
 
     // 监听vuex中数据变化
     watch(
@@ -249,11 +279,13 @@ export default {
 
     return {
       musicInfo,
+      loopTypeItem,
       handelPlay,
       handelStop,
       handelVoice,
       isCurrentState,
       handelDirection,
+      handelLoopClick,
     };
   },
 };
@@ -353,11 +385,16 @@ export default {
   border-radius: 50%;
   line-height: 24px;
 }
+
 .iconHover {
   transition: fill 0.25s;
 }
 .iconHover:hover {
   fill: #ec4141;
+}
+.loopIcon{
+  width: 18px;
+  height: 18px; 
 }
 .musicStress {
   width: 40px;
