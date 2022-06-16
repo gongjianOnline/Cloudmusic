@@ -15,7 +15,7 @@
       <div class="mainView">
         <router-view></router-view>
       </div>
-      <div class="CurrentListContainer">
+      <div class="CurrentListContainer" v-show="CurrentState">
         <CurrentList></CurrentList>
       </div>
     </div>
@@ -30,6 +30,8 @@ import Header from "../components/Layout/header.vue"
 import Footer from "../components/Layout/footer.vue"
 import MainMenu from "../components/mainContainer/mainMenu.vue"
 import CurrentList from "../components/currency/currentList.vue"
+import {useStore} from "vuex"
+import {watch,ref} from "vue"
 export default{
   name:"layout",
   components:{
@@ -39,8 +41,20 @@ export default{
     CurrentList
   },
   setup(){
-    return {
+    /**获取Vuex及全局上下文 */
+    const store = useStore();
+    /**变量声明区 */
+    const CurrentState = ref(false)
 
+
+    /**监听属性*/
+    watch(()=>store.getters.getCurrentState,(newValue)=>{
+      CurrentState.value = newValue
+    })
+
+
+    return {
+      CurrentState
     }
   }
 }
@@ -77,7 +91,7 @@ export default{
   bottom:0px;
   right: 0px;
   background: #fff;
-  width: 400px;
+  width: 420px;
   z-index: 3;
 }
 </style>

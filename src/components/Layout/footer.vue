@@ -88,7 +88,7 @@
         </el-popover>
       </span>
       <!-- 音乐列表Icon -->
-      <span>
+      <span @click="isCurrentState">
         <svg class="icon extendIcon" aria-hidden="true">
           <use xlink:href="#icon-liebiao"></use>
         </svg>
@@ -179,6 +179,12 @@ export default {
     const handelVoice = ()=>{
       audioElement.volume = (musicInfo.voiceValue) / 100;
     }
+    // 通知当前是否显示当前列表弹框
+    const isCurrentState = ()=>{
+      store.dispatch("setCurrentState",(!store.getters.getCurrentState))
+    }
+    
+    
     
     // 监听vuex中数据变化
     watch(()=>store.getters.getMusicNews,(newValue)=>{
@@ -195,7 +201,8 @@ export default {
       musicInfo,
       handelPlay,
       handelStop,
-      handelVoice
+      handelVoice,
+      isCurrentState,
     }
   }
 }
