@@ -288,8 +288,11 @@ export default {
           handelStop();
           musicInfo.progress = 0
         }
-        getMusicUrl(newValue.id);
-        musicInfo.musicNews = newValue;
+        if(newValue){
+          getMusicUrl(newValue.id);
+          musicInfo.musicNews = newValue;
+        }
+        
       }
     );
 

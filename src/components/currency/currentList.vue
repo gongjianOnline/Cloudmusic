@@ -65,7 +65,7 @@ export default {
 
     /**页面挂载时 */
     onMounted(()=>{
-      musicListData.data = JSON.parse(localStorage.getItem("currentListData"))
+      musicListData.data = JSON.parse(localStorage.getItem("currentListData")) || []
       playMusicItem(musicListData.data[0])
     })
 
