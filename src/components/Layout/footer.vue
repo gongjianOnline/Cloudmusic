@@ -68,7 +68,7 @@
           <div class="dateNumber">{{ musicInfo.currentTime }}</div>
           <div class="progressItem">
             <el-progress
-              :percentage="musicInfo.progress"
+              :percentage="musicInfo.progress-0"
               :show-text="false"
             />
           </div>

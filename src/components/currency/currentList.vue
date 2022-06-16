@@ -60,7 +60,9 @@ export default {
       localStorage.setItem("currentListData",JSON.stringify(newValue))
     })
     watch(()=>store.getters.getMusicNews,(newValue)=>{
-      playMusicInfo.item = newValue
+      if(newValue){
+        playMusicInfo.item = newValue
+      }
     })
 
     /**页面挂载时 */
