@@ -14,8 +14,15 @@ export default createStore({
       state.currentState = payload
     },
     mutations_songList:(state,payload)=>{
-      /**payload为数组 */
-      state.songList = state.songList.concat(payload)
+      if(payload){
+        /**payload为数组 */
+        const songListArr = [...payload,...state.songList]
+        // 数组去重
+        state.songList = Array.from(new Set(songListArr))
+      }else{
+        state.songList = [];
+      }
+      
     }
   },
   actions: {

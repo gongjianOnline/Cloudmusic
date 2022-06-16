@@ -7,24 +7,37 @@
   <div>
     <div class="titleContaienr">
       <div class="title">当前播放</div>
-      <div class="titleInfo">
-        <span>总{{musicListData.data.length}}首</span>
+      <div class="introduceContainer">
+        <div class="titleInfo">
+          <span>总{{musicListData.data.length}}首</span>
+        </div>
+        <div class="clearContent" @click="handelClear">
+          <span>清空列表</span>
+        </div>
       </div>
+      
     </div>
     <!-- 音乐列表 -->
     <div class="currentListContainer">
       <ul>
-        <li v-for="(item) in musicListData.data" :key="item.id">
-          <div class="currentName">{{item.name}}</div>
-          <div class="currentAuthor">{{item.ars}}</div>
-          <div class="currentDate">{{item.dt}}</div>
+        <li v-for="(item) in musicListData.data" 
+          :key="item.id" 
+          @dblclick="playMusicItem(item)">
+          <div v-show="playMusicInfo.item.id===item.id">
+            <svg class="icon playIcon" aria-hidden="true">
+              <use xlink:href="#icon-bofang"></use>
+            </svg>
+          </div>
+          <div class="currentName" :class="{'selected':playMusicInfo.item.id===item.id}">{{item.name}}</div>
+          <div class="currentAuthor" :class="{'selected':playMusicInfo.item.id===item.id}">{{item.ars}}</div>
+          <div class="currentDate" :class="{'selected':playMusicInfo.item.id===item.id}">{{item.dt}}</div>
         </li>
       </ul>
     </div>
   </div>
 </template>
 <script>
-import {watch,reactive} from "vue";
+import {watch,reactive,ref,onMounted} from "vue";
 import {useStore} from "vuex";
 import dayjs from "dayjs"
 export default {
@@ -38,14 +51,40 @@ export default {
     const musicListData = reactive({
       data:[]
     })
+    // 正在播放的歌曲
+    const playMusicInfo = reactive({item:{id:""}})
 
     /**watch 监听 */
     watch(()=>store.getters.getSongList,(newValue)=>{
       musicListData.data = newValue
+      localStorage.setItem("currentListData",JSON.stringify(newValue))
+    })
+    watch(()=>store.getters.getMusicNews,(newValue)=>{
+      playMusicInfo.item = newValue
     })
 
+    /**页面挂载时 */
+    onMounted(()=>{
+      musicListData.data = JSON.parse(localStorage.getItem("currentListData"))
+    })
+
+    /**事件声明 */
+    //清空当前歌单列表
+    const handelClear = ()=>{
+      store.dispatch("setSongList",null)
+      localStorage.removeItem("currentListData")
+    }
+    // 播放当前音乐
+    const playMusicItem = (item)=>{
+      // 向播放器发送歌曲信息
+      store.dispatch("setMusicNews",item)
+    }
+
     return {
-      musicListData
+      musicListData,
+      playMusicInfo,
+      handelClear,
+      playMusicItem,
     }
   }
 }
@@ -53,7 +92,8 @@ export default {
 <style scoped>
 .titleContaienr{
   padding-top: 23px;
-  padding-left: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
   padding-bottom: 18px;
   border-bottom: 1px solid #f3f3f3;
   text-align: left;
@@ -63,11 +103,21 @@ export default {
   font-weight: 600;
   color: #333333;
 }
-.titleInfo{
+.introduceContainer{
   margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.titleInfo{
   font-size: 14px;
   color: #cccccc;
 }
+.clearContent span{
+  color:#507daf;
+  font-size: 14px;
+  cursor: pointer;
+}
+
 /* 音乐列表 */
 .currentListContainer{
   height: calc(100vh - 250px);
@@ -116,6 +166,14 @@ export default {
 .currentDate{
   font-size:  14px; 
   color:#cccccc;
+}
+.selected{
+  color:#ec4646;
+}
+.playIcon{
+  fill:#ec4646;
+  width:10px;
+  height:14px  
 }
 
 </style>

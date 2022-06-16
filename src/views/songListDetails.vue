@@ -184,10 +184,10 @@ export default{
 
 <style scoped>
 .songListDetails-wrapper{
-
 }
 .headerContainer{
-  margin: 30px;
+  padding: 30px;
+  width: 100%;
   display: flex;
 }
 .SLDetailImg{
@@ -202,11 +202,15 @@ export default{
 }
 .SLDetailInfo{
   margin-left: 18px;
-  flex:1;
   text-align: left;
+  width: 75%;
+}
+.SLDetailInfoTitleContent{
+  display: flex;
+  align-items: center;
 }
 .SLDetailInfoTitleContent span{
-  display: inline-block;
+  display: block;
 }
 .SLDetailInfoTitleTag{
   width: 36px;
@@ -222,6 +226,10 @@ export default{
   color: #373737;
   font-size: 22px;
   font-weight: 600;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+
 }
 /* 作者信息 */
 .authorContainer{
