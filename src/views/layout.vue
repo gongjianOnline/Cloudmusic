@@ -15,9 +15,12 @@
       <div class="mainView">
         <router-view></router-view>
       </div>
-      <div class="CurrentListContainer" v-show="CurrentState">
-        <CurrentList></CurrentList>
+      <div class="maskContainer" @click="handelMask" v-show="CurrentState">
       </div>
+      <div class="CurrentListContainer" v-show="CurrentState">
+          <CurrentList></CurrentList>
+      </div>
+      
     </div>
     <!-- 底部 -->
     <Footer></Footer>
@@ -46,6 +49,11 @@ export default{
     /**变量声明区 */
     const CurrentState = ref(false)
 
+    /*事件绑定 */
+    // 控制遮罩层
+    const handelMask = ()=>{
+      store.dispatch("setCurrentState",(!store.getters.getCurrentState))
+    }
 
     /**监听属性*/
     watch(()=>store.getters.getCurrentState,(newValue)=>{
@@ -54,7 +62,8 @@ export default{
 
 
     return {
-      CurrentState
+      CurrentState,
+      handelMask
     }
   }
 }
@@ -85,6 +94,15 @@ export default{
   overflow: auto;
 }
 /* 当前播放列表 */
+.maskContainer{
+  position: absolute;
+  top: 0px;
+  bottom:0px;
+  right: 0px;
+  left: 0px;
+  opacity: 0;
+  z-index: 3;
+}
 .CurrentListContainer{
   position: absolute;
   top: 0px;
@@ -92,6 +110,6 @@ export default{
   right: 0px;
   background: #fff;
   width: 420px;
-  z-index: 3;
+  z-index: 4;
 }
 </style>
