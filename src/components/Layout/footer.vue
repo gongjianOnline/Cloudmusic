@@ -138,10 +138,14 @@ export default {
         al: { picUrl: "" },
         ar: {},
       },
-      progress: 0,
+      progress: 0, // 进度
       voiceValue: 40, // 音量
+      singleLoop:true, // 单曲循环
     });
-    let audioElement = null;
+    // 初始化音视频实例
+    let audioElement = new Audio();
+    audioElement.volume = musicInfo.voiceValue / 100;
+    audioElement.loop = musicInfo.singleLoop
     //定时器变量
     let timer = ref(null);
     //循环类型选项
@@ -233,7 +237,6 @@ export default {
           break;
         }
       }
-      console.log(itemIndex);
       if (type === "back") {
         if (itemIndex === 0) {
           store.dispatch("setMusicNews", currentList[currentList.length - 1]);
@@ -241,7 +244,6 @@ export default {
           store.dispatch("setMusicNews", currentList[itemIndex - 1]);
         }
       } else {
-        console.log(itemIndex >= currentList.length - 1);
         if (itemIndex >= currentList.length - 1) {
           store.dispatch("setMusicNews", currentList[0]);
         } else {
@@ -251,6 +253,7 @@ export default {
     };
     // 切换循环类型
     const handelLoopClick = ()=>{
+      // 切换状态
       let loopIconIndex = 0;
       for(let i = 0;i<loopType.length;i++){
       if(loopType[i].id === loopTypeItem.data.id){
@@ -262,6 +265,19 @@ export default {
       }else{
         loopTypeItem.data = loopType[loopIconIndex+1]
       }
+      // 根据状态是否为循环播放
+      if(loopTypeItem.data.id === "0"){
+        musicInfo.singleLoop = true;
+        audioElement.loop = musicInfo.singleLoop
+      }else{
+        musicInfo.singleLoop = false;
+        audioElement.loop = musicInfo.singleLoop
+      }
+    }
+    // 监听音乐播放结束的事件
+    audioElement.onended = ()=>{
+      /**如果在列表循环模式下，获取播放列表和当前音乐的信息比较，取下标做循环列表动作 */
+      console.log("音乐放完了")
     }
 
     // 监听vuex中数据变化
@@ -270,8 +286,8 @@ export default {
       (newValue) => {
         if (audioElement) {
           handelStop();
+          musicInfo.progress = 0
         }
-        audioElement = new Audio();
         getMusicUrl(newValue.id);
         musicInfo.musicNews = newValue;
       }
