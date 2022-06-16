@@ -15,6 +15,9 @@
       <div class="mainView">
         <router-view></router-view>
       </div>
+      <div class="CurrentListContainer">
+        <CurrentList></CurrentList>
+      </div>
     </div>
     <!-- 底部 -->
     <Footer></Footer>
@@ -22,11 +25,25 @@
   
 </template>
 
-<script setup>
+<script>
 import Header from "../components/Layout/header.vue"
 import Footer from "../components/Layout/footer.vue"
 import MainMenu from "../components/mainContainer/mainMenu.vue"
+import CurrentList from "../components/currency/currentList.vue"
+export default{
+  name:"layout",
+  components:{
+    Header,
+    Footer,
+    MainMenu,
+    CurrentList
+  },
+  setup(){
+    return {
 
+    }
+  }
+}
 
 
 </script>
@@ -41,6 +58,7 @@ import MainMenu from "../components/mainContainer/mainMenu.vue"
   display: flex;
   width: 100%;
   height: calc(100% - 75px - 60px);
+  position: relative;
 }
 .mainMenu{
   width: 20%;
@@ -51,5 +69,15 @@ import MainMenu from "../components/mainContainer/mainMenu.vue"
   width: 80%;
   height: 100%;
   overflow: auto;
+}
+/* 当前播放列表 */
+.CurrentListContainer{
+  position: absolute;
+  top: 0px;
+  bottom:0px;
+  right: 0px;
+  background: #fff;
+  width: 400px;
+  z-index: 3;
 }
 </style>
