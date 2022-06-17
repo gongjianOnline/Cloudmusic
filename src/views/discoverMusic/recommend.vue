@@ -14,8 +14,17 @@
       
       <!-- 推荐歌曲 -->
       <div class="moduleContainer">
-        <div class="moduleTitle">推荐歌单</div>
+        <div class="moduleTitle" @click="handelRoute('songSheet')">推荐歌单</div>
         <div class="moduleList">
+          <!-- 今日推荐 -->
+          <div class="moduleItem" v-show="isLogin">
+            <div class="moduleImgContent">
+              <img src="/img/discoverMusic/item.png" alt="">
+              <div class="moduleImgDay">{{dayLabel}}</div>
+            </div>
+            <div class="moduleItemTitle">每日歌曲推荐</div>
+          </div>
+          <!-- 其他歌单 -->
           <div class="moduleItem" 
             v-for="(item) in personalizedlist" 
             :key="item.id"
@@ -42,16 +51,21 @@
 </template>
 
 <script>
-import { ref,reactive , getCurrentInstance,onMounted } from "vue";
+import { ref,reactive , getCurrentInstance,onMounted,watch} from "vue";
 import { useRouter } from "vue-router"
+import {useStore} from "vuex"
+import dayjs from "dayjs"
 export default {
   name: "recommend",
   setup() {
     // 获取全局上下文
     const {proxy} = getCurrentInstance()
     const $http = proxy.$http;
+    const store = useStore();
     // 路由引入
     const router = useRouter();
+    // 判断用户是否登录
+    const isLogin = ref(false)
     // 轮播图片列表
     const carouselList = ref([]);
     const options = reactive({
@@ -64,6 +78,12 @@ export default {
     })
     // 推荐歌单列表
     const personalizedlist = ref([])
+    // 获取歌单的URL（登录和游客URL不同）
+    let resourceUrl = "personalized";
+    // 获取日期
+    const dayLabel = ref(dayjs(new Date()).format('DD'))
+
+    /*事件方法 */
     // 跳转到歌单详情
     const handelModuleItem = (item)=>{
       router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
@@ -79,25 +99,43 @@ export default {
       })
       carouselList.value = response.data.banners;
     }
-
     // 获取歌单
-    const getResourceList =async ()=>{
+    const getResourceList =async (field)=>{
       let response = await proxy.$axios({
         method:"get",
-        url:`${$http}/personalized`,
+        url:`${$http}/${resourceUrl}`,
       })
-      personalizedlist.value = response.data.result;
+      personalizedlist.value = response.data[field].splice(1,isLogin.value?7:8);
+    }
+    const handelRoute = (routerName)=>{
+      router.push({name:routerName})
     }
 
+    // 监听如果登录状态,已登录调用每日推荐歌单
+    watch(()=>store.getters.getIsLogin,(newValue)=>{
+      console.log("用户是否已登录watch",newValue)
+      if(newValue){
+        isLogin.value = true
+        resourceUrl = "recommend/resource";
+        getResourceList("recommend")
+      }
+    })
+
+
+
     onMounted(()=>{
-      getResourceList()
+      getResourceList("result")
       getCarouselList()
+      // console.log("用户是否已登录",store.getters.getIsLogin)
     })
     return {
       carouselList,
       options,
       personalizedlist,
-      handelModuleItem
+      isLogin,
+      dayLabel,
+      handelModuleItem,
+      handelRoute
     };
   },
 };
@@ -125,6 +163,7 @@ export default {
   text-align: left;
   width: 800px;
   margin: 0 auto;
+  cursor: pointer;
 }
 .moduleList{
   margin-top: 20px;
@@ -134,7 +173,7 @@ export default {
   margin: 20px auto;
 }
 .moduleItem{
-  width: 180px;
+  width: 160px;
   text-align: left;
   margin-right: 20px;
   margin-bottom: 20px;
@@ -143,10 +182,9 @@ export default {
   transition: all 5s;
 }
 .moduleImgContent{
-  width: 180px;
   border-radius: 10px;
-  background: #ccc;
   position: relative;
+  overflow: hidden;
 }
 .moduleImgContent:hover:after{
    opacity: 1
@@ -166,9 +204,16 @@ export default {
   transition: all 0.25s;
 }
 .moduleImgContent>img{
-  width: 100%;
-  height: 100%;
+  height: 160px;
   border-radius: 10px;
+}
+.moduleImgDay{
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%);
+  color: #fff;
+  font-size: 24px;
 }
 .moduleItemIcon{
   fill:#fff;
@@ -201,8 +246,16 @@ export default {
 }
 @media screen and (max-width:1150px){
   .moduleImgContent{
-    width: 100%;
+    width: 160px;
   }
+  .moduleImgDay{
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%);
+  color: #fff;
+  font-size: 24px;
+}
   .moduleItem:after{
     width: 32px;
     height: 32px;

@@ -158,7 +158,8 @@ export default{
     }
     // 登录信息监听
     ipcRenderer.on("mainUserInfo",function(e,data){
-      userInfo.data = data
+      userInfo.data = data;
+      inspectLogin()
     })
     // 检查登录状态
     const inspectLogin = async ()=>{
@@ -167,9 +168,11 @@ export default{
         url:`${$http}/login/status`
       })
       if(response.data.data.profile){
+        store.dispatch("setIsLogin",true)
         userInfo.data.token = "已登录";
         userInfo.data.profile = response.data.data.profile;
       }else{
+        store.dispatch("setIsLogin",false)
         userInfo.data.token = "";
       }
       console.log(response.data.data)

@@ -5,6 +5,7 @@ export default createStore({
     MusicNews:{}, // 音乐名称等信息
     currentState:false,// 当前列表菜单栏是否显示
     songList:JSON.parse(localStorage.getItem("currentListData"))||[], // 当前音乐列表
+    isLogin:false, // 用户登录状态
   },
   mutations: {
     mutations_MusicNews:(state,payload)=>{
@@ -23,6 +24,9 @@ export default createStore({
         state.songList = [];
       }
       
+    },
+    mutations_isLogin:(state,payload)=>{
+      state.isLogin = payload;
     }
   },
   actions: {
@@ -34,6 +38,9 @@ export default createStore({
     },
     setSongList:(store,args)=>{
       store.commit("mutations_songList",args)
+    },
+    setIsLogin:(store,args)=>{
+      store.commit("mutations_isLogin",args)
     }
   },
   getters: {
@@ -45,6 +52,9 @@ export default createStore({
     },
     getSongList:(state)=>{
       return state.songList
+    },
+    getIsLogin:(state)=>{
+      return state.isLogin
     }
   }
 })
