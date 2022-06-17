@@ -27,16 +27,16 @@ export default{
         menuName:"发现音乐",
         routerName:"recommend",
       },
-      {
-        id:0,
-        menuName:"每日歌单",
-        routerName:"dailySongList",
-      },
-      {
-        id:0,
-        menuName:"推荐歌曲",
-        routerName:"newMusic",
-      },
+      // {
+      //   id:0,
+      //   menuName:"每日歌单",
+      //   routerName:"dailySongList",
+      // },
+      // {
+      //   id:0,
+      //   menuName:"推荐歌曲",
+      //   routerName:"newMusic",
+      // },
       {
         id:0,
         menuName:"私人FM",

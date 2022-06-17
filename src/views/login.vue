@@ -7,7 +7,7 @@
   <div class="loginWrapper">
     <div class="codeContainer">
       <div></div>
-      <div class="closeContent">
+      <div class="closeContent" @click="handelLoginClose">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-guanbi"></use>
         </svg>

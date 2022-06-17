@@ -31,7 +31,7 @@
       </div>
       <div class="operationContainer">
         <!-- 未登录 -->
-        <div class="userInfoCenter" v-show="!userInfo.data.token"  @click="handelLogin">
+        <div class="userInfoCenter" v-show="!userInfo.data.cookie"  @click="handelLogin">
           <div class="userLogo">
             <svg class="icon userIcon" aria-hidden="true">
               <use xlink:href="#icon-yonghu"></use>
@@ -43,7 +43,7 @@
         <!-- 已登录用户操作模块 -->
         <el-popover placement="bottom" :width="280 " trigger="click">
           <template #reference>
-            <div class="userInfoCenter" v-show="userInfo.data.token">
+            <div class="userInfoCenter" v-show="userInfo.data.cookie">
               <div class="userLogo">
                 <img :src="userInfo.data.profile.avatarUrl" alt="" >
               </div>
@@ -52,6 +52,18 @@
             </div>
           </template>
           <div class="userOperation">
+            <div class="userOperationBtn">
+              <div class="userOperationContent" @click="handelLogout">
+                <span>
+                  <svg class="icon levelIcon" aria-hidden="true">
+                    <use xlink:href="#icon-dengji"></use>
+                  </svg>
+                </span>
+                <span>用户等级</span>
+              </div>
+              <div class="userLevel">Lv. {{userLevel.data.level}}</div>
+            </div>
+
             <div class="userOperationBtn">
               <div class="userOperationContent" @click="handelLogout">
                 <span>
@@ -113,13 +125,20 @@ export default{
     // 用户信息
     const userInfo = reactive({
       data:{
-        token:"",
+        cookie:"",
         profile:{
           avatarUrl:"",
           nickname:""
         }
       }
     })
+    // 用户等级
+    const userLevel = reactive({
+      data:{
+        level:""
+      }
+    })
+
 
     /**主线程监听 */
     // 监听隐藏按钮
@@ -160,6 +179,7 @@ export default{
     ipcRenderer.on("mainUserInfo",function(e,data){
       userInfo.data = data;
       inspectLogin()
+      getUserLevel()
     })
     // 检查登录状态
     const inspectLogin = async ()=>{
@@ -169,14 +189,25 @@ export default{
       })
       if(response.data.data.profile){
         store.dispatch("setIsLogin",true)
-        userInfo.data.token = "已登录";
+        userInfo.data.cookie = "xx"
         userInfo.data.profile = response.data.data.profile;
+        getUserLevel()
       }else{
         store.dispatch("setIsLogin",false)
-        userInfo.data.token = "";
+        userInfo.data.cookie = "";
       }
       console.log(response.data.data)
-      
+    }
+    // 获取用登录登录后的用户详细信息
+    const getUserLevel =  async ()=>{
+      const response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/user/level`
+      })
+      if(response.data.code === 200){
+        userLevel.data = response.data.data
+      }
+      console.log("用户详细信息",response)
     }
     // 退出登录
     const handelLogout = async()=>{
@@ -199,6 +230,7 @@ export default{
     return{
       windowState,
       userInfo,
+      userLevel,
       handelHideWindow,
       handelMaxWindow,
       handelRestoreWindow,
@@ -376,16 +408,24 @@ export default{
 .userOperationContent span{
   display: block;
   color:#333333;
-  font-size: 14px;
-  margin-right: 4px;
+  font-size: 13px;
+  margin-right: 6px;
   display: flex;
   align-items: center;
 }
 .userOperationIcon{
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   fill:#333;
-
+}
+.userLevel{
+  color:#999999;
+  font-size: 12px;
+}
+.levelIcon{
+  width: 14px;
+  height: 18px;
+  fill: #333;
 }
 
 </style>
