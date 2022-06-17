@@ -196,7 +196,6 @@ export default{
         store.dispatch("setIsLogin",false)
         userInfo.data.cookie = "";
       }
-      console.log(response.data.data)
     }
     // 获取用登录登录后的用户详细信息
     const getUserLevel =  async ()=>{
@@ -207,7 +206,6 @@ export default{
       if(response.data.code === 200){
         userLevel.data = response.data.data
       }
-      console.log("用户详细信息",response)
     }
     // 退出登录
     const handelLogout = async()=>{

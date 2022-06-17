@@ -143,7 +143,7 @@ export default {
       },
       progress: 0, // 进度
       voiceValue: 0, // 音量
-      singleLoop:true, // 单曲循环
+      singleLoop:false, // 单曲循环
     });
     // 初始化音视频实例
     let audioElement = new Audio();
@@ -166,9 +166,9 @@ export default {
     ])
     const loopTypeItem = reactive({
       data:{
-        icon:"#icon-24gl-repeatOnce2",
-        label:'单曲循环',
-        id:"0"
+        icon:"#icon-liebiaoxunhuan",
+        label:'列表循环',
+        id:"1"
       }
     })
     /**接口调用 */
