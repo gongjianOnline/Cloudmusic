@@ -31,7 +31,7 @@
       </div>
       <div class="operationContainer">
         <!-- 未登录 -->
-        <div class="userInfoCenter" v-show="!userInfo.data.cookie"  @click="handelLogin">
+        <div class="userInfoCenter" v-show="!userLoginState"  @click="handelLogin">
           <div class="userLogo">
             <svg class="icon userIcon" aria-hidden="true">
               <use xlink:href="#icon-yonghu"></use>
@@ -43,7 +43,7 @@
         <!-- 已登录用户操作模块 -->
         <el-popover placement="bottom" :width="280 " trigger="click">
           <template #reference>
-            <div class="userInfoCenter" v-show="userInfo.data.cookie">
+            <div class="userInfoCenter" v-show="userLoginState">
               <div class="userLogo">
                 <img :src="userInfo.data.profile.avatarUrl" alt="" >
               </div>
@@ -138,7 +138,8 @@ export default{
         level:""
       }
     })
-
+    // 用户登录状态
+    const userLoginState = ref(false);
 
     /**主线程监听 */
     // 监听隐藏按钮
@@ -189,12 +190,10 @@ export default{
       })
       if(response.data.data.profile){
         store.dispatch("setIsLogin",true)
-        userInfo.data.cookie = "xx"
         userInfo.data.profile = response.data.data.profile;
         getUserLevel()
       }else{
         store.dispatch("setIsLogin",false)
-        userInfo.data.cookie = "";
       }
     }
     // 获取用登录登录后的用户详细信息
@@ -218,6 +217,9 @@ export default{
       }
     }
 
+    watch(()=>store.getters.getIsLogin,(newValue)=>{
+      userLoginState.value = newValue
+    })
     
     
     // 页面加载时出发
@@ -229,6 +231,7 @@ export default{
       windowState,
       userInfo,
       userLevel,
+      userLoginState,
       handelHideWindow,
       handelMaxWindow,
       handelRestoreWindow,
