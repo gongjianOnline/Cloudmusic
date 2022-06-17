@@ -25,11 +25,14 @@
       <!-- 中间控制器 -->
       <div class="musicOperationContainer">
         <div class="musicController">
-          <span class="musicBtn" @click="handelLoopClick">
-            <svg class="icon loopIcon iconHover" aria-hidden="true">
-              <use v-bind:xlink:href="loopTypeItem.data.icon"></use>
-            </svg>
-          </span>
+          <el-tooltip :content="loopTypeItem.data.label" placement="top">
+            <span class="musicBtn" @click="handelLoopClick">
+              <svg class="icon loopIcon iconHover" aria-hidden="true">
+                <use v-bind:xlink:href="loopTypeItem.data.icon"></use>
+              </svg>
+            </span>
+          </el-tooltip>
+          
           <span class="musicBtn" @click="handelDirection('back')">
             <svg class="icon iconHover" aria-hidden="true">
               <use xlink:href="#icon-shangyishou"></use>
@@ -152,16 +155,19 @@ export default {
     const loopType = reactive([
       {
         icon:"#icon-24gl-repeatOnce2",
+        label:'单曲循环',
         id:"0"
       },
       {
         icon:"#icon-liebiaoxunhuan",
+        label:'列表循环',
         id:"1"
       }
     ])
     const loopTypeItem = reactive({
       data:{
         icon:"#icon-24gl-repeatOnce2",
+        label:'单曲循环',
         id:"0"
       }
     })
@@ -277,7 +283,9 @@ export default {
     // 监听音乐播放结束的事件
     audioElement.onended = ()=>{
       /**如果在列表循环模式下，获取播放列表和当前音乐的信息比较，取下标做循环列表动作 */
-      console.log("音乐放完了")
+      if(loopTypeItem.data.id === "1"){
+        handelDirection("next")
+      }
     }
 
     // 监听vuex中数据变化
