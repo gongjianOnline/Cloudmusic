@@ -166,6 +166,7 @@ export default{
     const handelPlayAll = ()=>{
       // console.log(musicList.data)
       store.dispatch("setSongList",musicList.data)
+      store.dispatch("setMusicNews",musicList.data[0])
     }
     
     /**声明周期 */

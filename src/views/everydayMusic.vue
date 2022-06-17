@@ -88,6 +88,7 @@ export default {
     // 播放全部
     const handelPlay = ()=>{
       store.dispatch("setSongList",musicData.data)
+      store.dispatch("setMusicNews",musicData.data[0])
     }
 
 

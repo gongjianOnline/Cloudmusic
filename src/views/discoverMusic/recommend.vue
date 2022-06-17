@@ -18,35 +18,38 @@
         <div class="moduleList">
           <!-- 今日推荐 -->
           <div class="moduleItem"
-            @click="handelEveryday()"
             v-show="isLogin" >
             <div class="moduleImgContent">
-              <img src="/img/discoverMusic/item.png" alt="">
+              <img src="/img/discoverMusic/item.png" 
+                alt="" 
+                @click="handelEveryday()">
               <div class="moduleImgDay">{{dayLabel}}</div>
+              <div class="clickContainer" @click="playAll('day',{})"></div>
             </div>
             <div class="moduleItemTitle">每日歌曲推荐</div>
           </div>
           <!-- 其他歌单 -->
           <div class="moduleItem" 
             v-for="(item) in personalizedlist" 
-            :key="item.id"
-            @click="handelModuleItem(item)">
+            :key="item.id">
             <div class="moduleImgContent">
-              <img :src="item.picUrl" alt="">
+              <img 
+                :src="item.picUrl" 
+                @click="handelModuleItem(item)"
+                alt="">
               <div class="moduleItemNumber">
                 <svg class="icon moduleItemIcon" aria-hidden="true">
                   <use xlink:href="#icon-24gl-play"></use>
                 </svg>
                 {{item.trackCount}}万
               </div>
+              <div class="clickContainer" @click="playAll('item',item)"></div>
             </div>
             <div class="moduleItemTitle">{{item.name}}</div>
           </div>
         </div>
       </div>
-
-
-
+      
     </div>
     
   </div>
@@ -57,8 +60,12 @@ import { ref,reactive , getCurrentInstance,onMounted,watch} from "vue";
 import { useRouter } from "vue-router"
 import {useStore} from "vuex"
 import dayjs from "dayjs"
+import HotPodcast from "../../components/podcast/hotPodcast.vue"
 export default {
   name: "recommend",
+  components:{
+    HotPodcast
+  },
   setup() {
     // 获取全局上下文
     const {proxy} = getCurrentInstance()
@@ -116,6 +123,70 @@ export default {
     const handelEveryday = ()=>{
       router.push({name:'everydayMusic'})
     }
+    // 播放全部
+    const playAll = (type,data)=>{
+      if(type === "day"){
+        getMusicData()
+      }else{
+        getDetailList(data)
+      }
+
+
+    }
+    // 每日推荐歌单详情
+    const getMusicData = async ()=>{
+      let response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/recommend/songs`,
+      })
+      let res = response.data.data.dailySongs;
+      res.forEach((resItem,resIndex)=>{
+        // 格式化作者信息
+        resItem.ars = [];
+        resItem.ar.forEach((arItem,arIndex)=>{
+          resItem.ars[arIndex] = arItem.name
+        })
+        resItem.ars = resItem.ars.join(' ');
+        // 专辑
+        resItem.tns = "";
+        // 时长
+        resItem.dt = dayjs(resItem.dt).format('mm:ss')
+      })
+      store.dispatch("setSongList",res)
+      store.dispatch("setMusicNews",res[0])
+    }
+    // 推荐歌单列表详情
+    const getDetailList = async (item)=>{
+      let response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/playlist/detail`,
+        params:{
+          id:item.id
+        }
+      })
+      let res  = response.data.playlist;
+      res.tags = (res.tags).join(" / ");
+      res.tracksLength = res.tracks.length;
+      //歌曲列表
+      // 整理专辑标签
+      res.tracks.forEach((item)=>{
+        if(item.tns){
+          item.tns = item.tns.join("")
+        }else{
+          item.tns = ""
+        }
+        // 音乐时长转换
+        item.dt = dayjs(item.dt).format('mm:ss')
+        // 作者格式调整对象转换成数组
+        item.ars = []
+        item.ar.forEach((arItem)=>{
+          item.ars.push(arItem.name)
+        })
+        item.ars = item.ars.join(" ")
+      })
+      store.dispatch("setSongList",res.tracks)
+      store.dispatch("setMusicNews",res.tracks[0])
+    }
 
     // 监听如果登录状态,已登录调用每日推荐歌单
     watch(()=>store.getters.getIsLogin,(newValue)=>{
@@ -125,7 +196,7 @@ export default {
         resourceUrl = "recommend/resource";
         getResourceList("recommend")
       }
-    })
+    }) 
 
 
 
@@ -141,6 +212,8 @@ export default {
       getCarouselList()
       // console.log("用户是否已登录",store.getters.getIsLogin)
     })
+
+
     return {
       carouselList,
       options,
@@ -149,7 +222,8 @@ export default {
       dayLabel,
       handelModuleItem,
       handelRoute,
-      handelEveryday
+      handelEveryday,
+      playAll,
     };
   },
 };
@@ -216,6 +290,15 @@ export default {
   background-image: url("/img/discoverMusic/play.png");
   background-size: 100%;
   transition: all 0.25s;
+}
+.clickContainer{
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width:40px;
+  height: 40px;
+  border-radius: 50%;
+  z-index:2;
 }
 .moduleImgContent>img{
   height: 160px;

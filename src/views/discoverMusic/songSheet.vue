@@ -69,8 +69,7 @@
       <div class="songSheetListContent">
         <div class="songSheetItem"
           v-for="(item) in songSheetList" 
-          :key="item.id"
-          @click="handelModuleItem(item)">
+          :key="item.id">
           <div class="songSheetItemImg">
             <div class="songSheetHeader">
               <span>
@@ -80,7 +79,8 @@
               </span>
               <span>{{item.subscribedCount}}</span>
             </div>
-            <img :src="item.coverImgUrl" alt="">
+            <img :src="item.coverImgUrl" alt=""
+              @click="handelModuleItem(item)">
             <div class="songSheetFooter">
               <span>
                 <svg class="icon songSheetFooterIcon" aria-hidden="true">
@@ -89,7 +89,7 @@
               </span>
               <span>{{item.creator.nickname}}</span>
             </div>
-            <div class="playIconContainer">
+            <div class="playIconContainer" @click="playAll(item)">
               <svg class="icon playIcon" aria-hidden="true">
                 <use xlink:href="#icon-bofang"></use>
               </svg>
@@ -100,20 +100,21 @@
 
       </div>
     </div>
-
-
   </div>
 </template>
 
 <script>
 import { ref,reactive , getCurrentInstance,onMounted } from "vue";
 import { useRouter , useRoute} from 'vue-router'
+import {useStore} from "vuex"
+import dayjs from "dayjs"
 export default{
   name:"songSheet",
   setup(){
     /**路由初始化 */
     const router = useRouter();
     const route = useRoute();
+    const store = useStore();
     // 获取全局上下文
     const {proxy} = getCurrentInstance()
     const $http = proxy.$http;
@@ -163,6 +164,42 @@ export default{
     const handelModuleItem = (item)=>{
       router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
     }
+    // 播放全部
+    const playAll = (item)=>{
+      getDetailList(item)
+    }
+    // 推荐歌单列表详情
+    const getDetailList = async (item)=>{
+      let response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/playlist/detail`,
+        params:{
+          id:item.id
+        }
+      })
+      let res  = response.data.playlist;
+      res.tags = (res.tags).join(" / ");
+      res.tracksLength = res.tracks.length;
+      //歌曲列表
+      // 整理专辑标签
+      res.tracks.forEach((item)=>{
+        if(item.tns){
+          item.tns = item.tns.join("")
+        }else{
+          item.tns = ""
+        }
+        // 音乐时长转换
+        item.dt = dayjs(item.dt).format('mm:ss')
+        // 作者格式调整对象转换成数组
+        item.ars = []
+        item.ar.forEach((arItem)=>{
+          item.ars.push(arItem.name)
+        })
+        item.ars = item.ars.join(" ")
+      })
+      store.dispatch("setSongList",res.tracks)
+      store.dispatch("setMusicNews",res.tracks[0])
+    }
 
     onMounted(()=>{
       getSongSheetList()
@@ -173,7 +210,8 @@ export default{
       songSheetList,
       songSheetTypeList,
       handleType,
-      handelModuleItem
+      handelModuleItem,
+      playAll
     }
 
   }

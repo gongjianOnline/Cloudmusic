@@ -8,7 +8,7 @@
     <div class="rankingListTitle">官方榜</div>
     <!-- 官方推荐列表 -->
     <div class="officialListContainer" v-for="(item) in rankingTopList.data" :key="item.id">
-      <div class="officialItemLogo" @click="handelModuleItem(item)">
+      <div class="officialItemLogo" @click="playAll(item)">
         <div class="officialDate">刚刚更新</div>
         <div class="officialPlay">
           <svg class="icon playIcon" aria-hidden="true">
@@ -60,7 +60,8 @@
 
 <script>
 import { ref,reactive , getCurrentInstance,onMounted } from "vue";
-import { useRouter , useRoute} from 'vue-router'
+import { useRouter , useRoute} from 'vue-router';
+import {useStore} from "vuex"
 import dayjs from "dayjs"
 export default{
   name:"rankingList",
@@ -68,6 +69,7 @@ export default{
     // 获取全局上下文
     const {proxy} = getCurrentInstance();
     const $http = proxy.$http;
+    const store = useStore();
     /**路由初始化 */
     const router = useRouter();
     const route = useRoute();
@@ -110,6 +112,42 @@ export default{
     const handelModuleItem = (item)=>{
       router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
     }
+    // 全部播放
+    const playAll = (item)=>{
+      getDetailList(item)
+    }
+    // 推荐歌单列表详情
+    const getDetailList = async (item)=>{
+      let response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/playlist/detail`,
+        params:{
+          id:item.id
+        }
+      })
+      let res  = response.data.playlist;
+      res.tags = (res.tags).join(" / ");
+      res.tracksLength = res.tracks.length;
+      //歌曲列表
+      // 整理专辑标签
+      res.tracks.forEach((item)=>{
+        if(item.tns){
+          item.tns = item.tns.join("")
+        }else{
+          item.tns = ""
+        }
+        // 音乐时长转换
+        item.dt = dayjs(item.dt).format('mm:ss')
+        // 作者格式调整对象转换成数组
+        item.ars = []
+        item.ar.forEach((arItem)=>{
+          item.ars.push(arItem.name)
+        })
+        item.ars = item.ars.join(" ")
+      })
+      store.dispatch("setSongList",res.tracks)
+      store.dispatch("setMusicNews",res.tracks[0])
+    }
 
     /**生命周期调用 */
     onMounted(()=>{
@@ -119,7 +157,8 @@ export default{
     return {
       rankingTopList,
       rankingList,
-      handelModuleItem
+      handelModuleItem,
+      playAll
     }
 
     
