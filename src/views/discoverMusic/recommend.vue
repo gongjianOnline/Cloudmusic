@@ -17,7 +17,9 @@
         <div class="moduleTitle" @click="handelRoute('songSheet')">推荐歌单</div>
         <div class="moduleList">
           <!-- 今日推荐 -->
-          <div class="moduleItem" v-show="isLogin">
+          <div class="moduleItem"
+            @click="handelEveryday()"
+            v-show="isLogin" >
             <div class="moduleImgContent">
               <img src="/img/discoverMusic/item.png" alt="">
               <div class="moduleImgDay">{{dayLabel}}</div>
@@ -110,6 +112,10 @@ export default {
     const handelRoute = (routerName)=>{
       router.push({name:routerName})
     }
+    // 每日推荐
+    const handelEveryday = ()=>{
+      router.push({name:'everydayMusic'})
+    }
 
     // 监听如果登录状态,已登录调用每日推荐歌单
     watch(()=>store.getters.getIsLogin,(newValue)=>{
@@ -124,7 +130,14 @@ export default {
 
 
     onMounted(()=>{
-      getResourceList("result")
+      if(store.getters.getIsLogin){
+        isLogin.value = true
+        resourceUrl = "recommend/resource";
+        getResourceList("recommend")
+      }else{
+        getResourceList("result")
+      }
+      
       getCarouselList()
       // console.log("用户是否已登录",store.getters.getIsLogin)
     })
@@ -135,7 +148,8 @@ export default {
       isLogin,
       dayLabel,
       handelModuleItem,
-      handelRoute
+      handelRoute,
+      handelEveryday
     };
   },
 };

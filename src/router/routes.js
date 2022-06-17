@@ -28,7 +28,7 @@ const routes = [
               name:"rankingList",
               title:"排行榜",
               component: () => import('../views/discoverMusic/rankingList.vue'), 
-            },
+            }
           ]
         },
         {
@@ -55,6 +55,12 @@ const routes = [
           title:"歌单详情",
           component: () => import('../views/songListDetails.vue'), 
         },
+        {
+          path: '/everydayMusic',
+          name:"everydayMusic",
+          title:"每日推荐歌曲列表",
+          component: () => import('../views/everydayMusic.vue'), 
+        }
       ]
   },
   {
