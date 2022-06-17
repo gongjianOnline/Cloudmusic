@@ -8,6 +8,13 @@ import '@splidejs/vue-splide/css';
 import axios from "axios"
 import store from './store'
 
+axios.interceptors.request.use((config)=>{
+  config.params = {
+    ...config.params,
+    realIp:returnCitySN["cip"]
+  }
+  return config
+})
 
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;
@@ -15,7 +22,7 @@ app.config.globalProperties.$axios = axios;
 if(process.env.NODE_ENV === "development"){
   app.config.globalProperties.$http = "/http";
 }else{
-  app.config.globalProperties.$http = "http://localhost:3001";
+  app.config.globalProperties.$http = "https://netease-cloud-music-api-five-indol.vercel.app";
 }
 
 app.use(router)
