@@ -287,7 +287,7 @@ export default {
   border-radius: 50%;
   opacity: 0;
   background-color: #e7e7e7;
-  background-image: url("/img/discoverMusic/play.png");
+  background-image: url("../img/discoverMusic/play.png");
   background-size: 100%;
   transition: all 0.25s;
 }
