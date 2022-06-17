@@ -1,5 +1,12 @@
 import { createStore } from 'vuex'
-
+const removeDuplicateObj = (arr) => {
+  let obj = {};
+  arr = arr.reduce((newArr, next) => {
+    obj[next.id] ? "" : (obj[next.id] = true && newArr.push(next));
+    return newArr;
+  }, []);
+  return arr;
+}
 export default createStore({
   state: {
     MusicNews:{}, // 音乐名称等信息
@@ -17,9 +24,9 @@ export default createStore({
     mutations_songList:(state,payload)=>{
       if(payload){
         /**payload为数组 */
-        const songListArr = [...payload,...state.songList]
-        // 数组去重
-        state.songList = Array.from(new Set(songListArr))
+        const songListArr = [...payload,...(state.songList)]
+        // 去重
+        state.songList = removeDuplicateObj(songListArr)
       }else{
         state.songList = [];
       }
