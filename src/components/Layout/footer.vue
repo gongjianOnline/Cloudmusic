@@ -142,7 +142,7 @@ export default {
         ar: {},
       },
       progress: 0, // 进度
-      voiceValue: 30, // 音量
+      voiceValue: 0, // 音量
       singleLoop:false, // 单曲循环
     });
     // 初始化音视频实例

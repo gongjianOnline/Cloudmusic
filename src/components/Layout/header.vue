@@ -20,15 +20,33 @@
             </svg>
           </div>
         </div>
-        <div class="searchContainer">
-          <div class="searchIcon">
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-sousuo"></use>
-            </svg>
+        <!-- 搜索 -->
+        <el-popover placement="bottom" :width="400" trigger="click">
+          <template #reference>
+            <div class="searchContainer">
+              <div class="searchIcon">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-sousuo"></use>
+                </svg>
+              </div>
+              <input type="text" class="searchInput">
+            </div>
+          </template>
+          <!-- 热搜榜 -->
+          <div class="searchHotList">
+            <div class="searchHot">热搜榜</div>
+            <ul class="searchHotListContent">
+              <li v-for="(item,index) in hostList.data" :key="index">
+                <div class="searchHotIndex">{{index+1}}</div>
+                <div class="searchHotLabel">{{item.first}}</div>
+              </li>
+            </ul>
           </div>
-          <input type="text" class="searchInput">
-        </div>
+          
+        </el-popover>
+        
       </div>
+
       <div class="operationContainer">
         <!-- 未登录 -->
         <div class="userInfoCenter" v-show="!userLoginState"  @click="handelLogin">
@@ -140,6 +158,8 @@ export default{
     })
     // 用户登录状态
     const userLoginState = ref(false);
+    // 热搜列表
+    const hostList = reactive({data:{}})
 
     /**主线程监听 */
     // 监听隐藏按钮
@@ -216,6 +236,15 @@ export default{
         inspectLogin()
       }
     }
+    // 获取热搜列表
+    const getHotList = async ()=>{
+      let response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/search/hot`
+      })
+      console.log("热搜列表",response)
+      hostList.data = response.data.result.hots
+    }
 
     watch(()=>store.getters.getIsLogin,(newValue)=>{
       userLoginState.value = newValue
@@ -225,6 +254,7 @@ export default{
     // 页面加载时出发
     onMounted(()=>{
       inspectLogin()
+      getHotList()
     })
 
     return{
@@ -232,6 +262,7 @@ export default{
       userInfo,
       userLevel,
       userLoginState,
+      hostList,
       handelHideWindow,
       handelMaxWindow,
       handelRestoreWindow,
@@ -337,6 +368,44 @@ export default{
 .searchInput:focus{
   outline:none
 }
+.searchHotList{
+  height: 400px;
+  overflow: auto;
+}
+.searchHot{
+  font-size: 16px;
+  color:#666666;
+  padding: 20px;
+}
+.searchHotListContent{
+  list-style: none;
+}
+.searchHotListContent li {
+  padding: 20px;
+  display:flex;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.searchHotListContent li div{
+  margin-right: 20px;
+}
+.searchHotIndex{
+  font-size: 14px;
+  color:#ff3d3d
+}
+.searchHotLabel{
+  color:#333333;  
+  font-weight: 600;
+}
+.searchHotListContent li:nth-child(odd){
+  background: #fff;
+}
+.searchHotListContent li:hover{
+  background: #f3f3f3;
+}
+
+
+
 /* 右边操作栏 */
 .operationContainer{
   display: flex;
