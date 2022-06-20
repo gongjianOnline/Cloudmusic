@@ -29,11 +29,11 @@
                   <use xlink:href="#icon-sousuo"></use>
                 </svg>
               </div>
-              <input type="text" class="searchInput">
+              <input type="text" class="searchInput" @input="handelSearch($event)"/>
             </div>
           </template>
           <!-- 热搜榜 -->
-          <div class="searchHotList">
+          <div class="searchHotList"  v-if="!recommendList.data.length">
             <div class="searchHot">热搜榜</div>
             <ul class="searchHotListContent">
               <li v-for="(item,index) in hostList.data" :key="index">
@@ -41,6 +41,17 @@
                 <div class="searchHotLabel">{{item.first}}</div>
               </li>
             </ul>
+          </div>
+          <!-- 搜索推荐 -->
+          <div class="searchHotList222"  v-if="recommendList.data.length">
+            <div v-for="(item,index) in recommendList.data" :key="index">
+              <div class="searchHot">{{item.name}}</div>
+                <ul class="searchHotListContent">
+                  <li v-for="(musicItem,musicIndex) in item.data" :key="musicIndex">
+                    <div class="searchHotLabel">{{musicItem.name}}</div>
+                  </li>
+                </ul>
+            </div>
           </div>
           
         </el-popover>
@@ -160,6 +171,9 @@ export default{
     const userLoginState = ref(false);
     // 热搜列表
     const hostList = reactive({data:{}})
+    // 搜索推荐内容
+    const recommendList =  reactive({data:[]})
+
 
     /**主线程监听 */
     // 监听隐藏按钮
@@ -245,6 +259,49 @@ export default{
       console.log("热搜列表",response)
       hostList.data = response.data.result.hots
     }
+    // 监听搜索框输入
+    const handelSearch = proxy.$_.throttle(async (event)=>{
+       // 表驱动编程
+      let notesKeys = [
+        {
+          key:"songs",
+          name:"单曲"
+        },
+        {
+          key:"playlists",
+          name:'歌单'
+        },
+        {
+          key:"artists",
+          name:"歌手"
+        },
+        {
+          key:"albums",
+          name:"专辑"
+        }
+      ]
+      let response = await proxy.$axios({
+        method:"get",
+        url:`${$http}/search/suggest`,
+        params:{
+          keywords:event.target.value
+        }
+      })
+      let res = response.data.result;
+      let initData = [];
+      for(let key in res){
+        if(key !== "order"){
+          let obj = {};
+          notesKeys.forEach((item,index)=>{
+            if(item.key === key){obj.name=item.name}
+          })
+          obj.data = res[key]
+          initData.push(obj)
+        }
+        recommendList.data = initData
+      } 
+    },3000)
+    
 
     watch(()=>store.getters.getIsLogin,(newValue)=>{
       userLoginState.value = newValue
@@ -263,6 +320,7 @@ export default{
       userLevel,
       userLoginState,
       hostList,
+      recommendList,
       handelHideWindow,
       handelMaxWindow,
       handelRestoreWindow,
@@ -270,7 +328,8 @@ export default{
       handelHistory,
       handelLogin,
       handelLogout,
-      inspectLogin
+      inspectLogin,
+      handelSearch
     }
   }
 }
@@ -373,15 +432,15 @@ export default{
   overflow: auto;
 }
 .searchHot{
-  font-size: 16px;
+  font-size: 14px;
   color:#666666;
-  padding: 20px;
+  padding:10px 20px;
 }
 .searchHotListContent{
   list-style: none;
 }
 .searchHotListContent li {
-  padding: 20px;
+  padding: 10px 20px;
   display:flex;
   cursor: pointer;
   transition: background 0.25s;

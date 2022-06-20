@@ -7,6 +7,7 @@ import VueSplide from '@splidejs/vue-splide';
 import '@splidejs/vue-splide/css';
 import axios from "axios"
 import store from './store'
+let _ = require('lodash')
 
 axios.interceptors.request.use((config)=>{
   config.params = {
@@ -18,6 +19,7 @@ axios.interceptors.request.use((config)=>{
 
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;
+app.config.globalProperties.$_ = _;
 
 if(process.env.NODE_ENV === "development"){
   app.config.globalProperties.$http = "/http";
