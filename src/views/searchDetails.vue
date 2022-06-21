@@ -30,8 +30,16 @@
     <div class="classifyContainer">
       <div class="classifyContent">
         <div class="classifyItem">
-          <span class="classifyName">单曲</span>
-          <span class="classifyLine"></span>
+          <span class="classifyName" :class="{'classifyNameSelected':menuId==='1'}">单曲</span>
+          <span :class="{'classifyLine':menuId==='1'}"></span>
+        </div>
+        <div class="classifyItem">
+          <span class="classifyName" :class="{'classifyNameSelected':menuId==='10'}">专辑</span>
+          <span :class="{'classifyLine':menuId==='10'}"></span>
+        </div>
+        <div class="classifyItem">
+          <span class="classifyName" :class="{'classifyNameSelected':menuId==='1000'}">歌单</span>
+          <span :class="{'classifyLine':menuId==='1000'}"></span>
         </div>
       </div>
       <div class="classifyRemarks">找到了300首单曲</div>
@@ -58,28 +66,56 @@
 
     <!-- 播放列表 -->
     <MusicList :dataList="dataList"></MusicList>
-
+    <AlbumList></AlbumList>
+    <SongSheetList></SongSheetList>
 
   </div>
 </template>
 
 <script>
 import MusicList from "../components/currency/musicList.vue";
-import {ref,reactive} from "vue"
+import AlbumList from "../components/currency/albumList.vue";
+import SongSheetList from "../components/currency/songSheetList.vue"
+import {ref,reactive,getCurrentInstance,onMounted} from "vue";
+import {useRouter,useRoute} from "vue-router"
 export default {
   name:"searchDetails",
   components:{
-    MusicList
+    MusicList,
+    AlbumList,
+    SongSheetList
   },
   setup(){
+    /**全局上下文 */
+    const {proxy} = getCurrentInstance();
+    const $http = proxy.$http
+    const route = useRoute()
     /**变量声明 */
     // 播放列表数据集合
     const dataList = reactive({data:{}})
+    // 菜单ID
+    const menuId = ref(route.params.searchInfoTypeId)
 
+    /**获取搜索详情 */
+    const getSearchFun = async ()=>{
+      const response = await proxy.$axios({
+        method:'get',
+        url:`${$http}/cloudsearch`,
+        params:{
+          keywords:route.params.searchInfo,
+          type:route.params.searchInfoTypeId
+        }
+      })
+      console.log("获取搜索详情",response)
+    }
 
+    onMounted(()=>{
+      getSearchFun()
+    })
 
     return {
-      dataList
+      dataList,
+      menuId
     }
   }
 }
@@ -160,9 +196,11 @@ export default {
 }
 .classifyName{
   font-size: 16px;
-  font-weight: 600;
   color:#373737;
   margin-bottom: 4px;
+}
+.classifyNameSelected{
+  font-weight: 600;
 }
 .classifyLine{
   width: 26px;

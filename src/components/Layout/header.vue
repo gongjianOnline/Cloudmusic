@@ -47,7 +47,7 @@
             <div v-for="(item,index) in recommendList.data" :key="index">
               <div class="searchHot">{{item.name}}</div>
                 <ul class="searchHotListContent">
-                  <li v-for="(musicItem,musicIndex) in item.data" :key="musicIndex">
+                  <li v-for="(musicItem,musicIndex) in item.data" :key="musicIndex" @click="handelRecommend(item,musicItem)">
                     <div class="searchHotLabel">{{musicItem.name}}</div>
                   </li>
                 </ul>
@@ -264,19 +264,23 @@ export default{
       let notesKeys = [
         {
           key:"songs",
-          name:"单曲"
+          name:"单曲",
+          typeId:"1"
         },
         {
           key:"playlists",
-          name:'歌单'
+          name:'歌单',
+          typeId:"1000"
         },
-        {
-          key:"artists",
-          name:"歌手"
-        },
+        // {
+        //   key:"artists",
+        //   name:"歌手",
+        //   typeId:"100"
+        // },
         {
           key:"albums",
-          name:"专辑"
+          name:"专辑",
+          typeId:"10"
         }
       ]
       let response = await proxy.$axios({
@@ -292,7 +296,10 @@ export default{
         if(key !== "order"){
           let obj = {};
           notesKeys.forEach((item,index)=>{
-            if(item.key === key){obj.name=item.name}
+            if(item.key === key){
+              obj.name=item.name
+              obj.typeId=item.typeId
+            }
           })
           obj.data = res[key]
           initData.push(obj)
@@ -302,8 +309,17 @@ export default{
     },3000)
     // 点击搜索详情
     const handelSearchDetails = (item)=>{
-      console.log(item)
-      route.push({name:"searchDetails"})
+      route.push({name:"searchDetails",params:{
+        searchInfo:item.first,
+        searchInfoTypeId:10
+      }})
+    }
+    // 点击搜索推荐
+    const handelRecommend = (item,musicItem)=>{
+      route.push({name:"searchDetails",params:{
+        searchInfo:musicItem.name,
+        searchInfoTypeId:item.typeId
+      }})
     }
 
     watch(()=>store.getters.getIsLogin,(newValue)=>{
@@ -333,7 +349,8 @@ export default{
       handelLogout,
       inspectLogin,
       handelSearch,
-      handelSearchDetails
+      handelSearchDetails,
+      handelRecommend
     }
   }
 }
