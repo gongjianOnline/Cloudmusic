@@ -76,7 +76,7 @@
 import MusicList from "../components/currency/musicList.vue";
 import AlbumList from "../components/currency/albumList.vue";
 import SongSheetList from "../components/currency/songSheetList.vue"
-import {ref,reactive,getCurrentInstance,onMounted} from "vue";
+import {ref,reactive,getCurrentInstance,onMounted,watch} from "vue";
 import {useRouter,useRoute} from "vue-router";
 import dayjs from "dayjs";
 import {useStore} from "vuex"
@@ -144,10 +144,8 @@ export default {
       }
       if(menuId.value === "1000"){
         let res = response.data.result.playlists;
-        console.log(res)
         res.forEach((item,index)=>{
           item.playCount = ((item.playCount/10000).toString()).substring(0,3)
-          console.log(item.playCount)
         })
         songSheetList.data = res;
       }
@@ -164,8 +162,25 @@ export default {
       store.dispatch("setMusicNews",searchDetailsList.data[0])
     }
 
+    watch(()=>store.getters.getSearchKey,(newValue)=>{
+      searchKeyword.value = newValue.searchInfo;
+      menuId.value = newValue.searchInfoTypeId;
+      getSearchFun()
+    })
 
     onMounted(()=>{
+      if(route.params.searchInfo){
+        searchKeyword.value = route.params.searchInfo;
+        menuId.value = route.params.searchInfoTypeId;
+        localStorage.setItem("searchDetailsParams",JSON.stringify({
+          searchKeyword : route.params.searchInfo,
+          menuId : route.params.searchInfoTypeId
+        }))
+      }else{
+        let params = JSON.parse(localStorage.getItem("searchDetailsParams"))
+        searchKeyword.value = params.searchKeyword;
+        menuId.value = params.menuId;
+      }
       getSearchFun()
     })
 

@@ -37,7 +37,7 @@ export default{
     const {albumList} = toRefs(props)
     /**事件绑定 */
     const handelClick = (item)=>{
-      item.id = item.copyrightId
+      // item.id = item.copyrightId
       router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
     }
     return {

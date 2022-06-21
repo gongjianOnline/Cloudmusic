@@ -316,6 +316,10 @@ export default{
     }
     // 点击搜索推荐
     const handelRecommend = (item,musicItem)=>{
+      store.dispatch("setSearchKey",{
+        searchInfo:musicItem.name,
+        searchInfoTypeId:item.typeId
+      })
       route.push({name:"searchDetails",params:{
         searchInfo:musicItem.name,
         searchInfoTypeId:item.typeId
