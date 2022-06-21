@@ -5,9 +5,9 @@
 -->
 <template>
   <div class="searchDetails-wrapper">
-    <div class="searchTitle">搜索 Free Loop</div>
+    <div class="searchTitle">搜索 {{searchKeyword}}</div>
     <!-- 可能感兴趣 -->
-    <div class="interestContainer">
+    <!-- <div class="interestContainer">
       <div class="interestTitle">你可能感兴趣</div>
       <div class="interestWrapper">
         <div class="interestContent">
@@ -24,31 +24,31 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 分类栏 -->
     <div class="classifyContainer">
       <div class="classifyContent">
-        <div class="classifyItem">
+        <div class="classifyItem" @click="handelType('1')">
           <span class="classifyName" :class="{'classifyNameSelected':menuId==='1'}">单曲</span>
           <span :class="{'classifyLine':menuId==='1'}"></span>
         </div>
-        <div class="classifyItem">
+        <div class="classifyItem" @click="handelType('10')">
           <span class="classifyName" :class="{'classifyNameSelected':menuId==='10'}">专辑</span>
           <span :class="{'classifyLine':menuId==='10'}"></span>
         </div>
-        <div class="classifyItem">
+        <div class="classifyItem" @click="handelType('1000')">
           <span class="classifyName" :class="{'classifyNameSelected':menuId==='1000'}">歌单</span>
           <span :class="{'classifyLine':menuId==='1000'}"></span>
         </div>
       </div>
-      <div class="classifyRemarks">找到了300首单曲</div>
+      <div class="classifyRemarks" v-if="menuId==='1'">找到了{{searchDetailsList.data.length}}首单曲</div>
     </div>
 
     <!-- 操作按钮 -->
-    <div class="operationContainer">
+    <div class="operationContainer" v-if="menuId==='1'">
       <div>
-        <div class="palyAllBtn">
+        <div class="palyAllBtn" @click="palyAllFun">
           <span>
             <svg class="icon palyAllIcon" aria-hidden="true">
               <use xlink:href="#icon-bofang"></use>
@@ -65,9 +65,9 @@
     </div>
 
     <!-- 播放列表 -->
-    <MusicList :dataList="dataList"></MusicList>
-    <AlbumList></AlbumList>
-    <SongSheetList></SongSheetList>
+    <MusicList :dataList="searchDetailsList" v-if="menuId==='1'"></MusicList>
+    <AlbumList :albumList="albumList.data" v-if="menuId==='10'"></AlbumList>
+    <SongSheetList :songSheetList="songSheetList.data" v-if="menuId==='1000'"></SongSheetList>
 
   </div>
 </template>
@@ -77,7 +77,9 @@ import MusicList from "../components/currency/musicList.vue";
 import AlbumList from "../components/currency/albumList.vue";
 import SongSheetList from "../components/currency/songSheetList.vue"
 import {ref,reactive,getCurrentInstance,onMounted} from "vue";
-import {useRouter,useRoute} from "vue-router"
+import {useRouter,useRoute} from "vue-router";
+import dayjs from "dayjs";
+import {useStore} from "vuex"
 export default {
   name:"searchDetails",
   components:{
@@ -90,24 +92,78 @@ export default {
     const {proxy} = getCurrentInstance();
     const $http = proxy.$http
     const route = useRoute()
+    const store = useStore()
     /**变量声明 */
     // 播放列表数据集合
     const dataList = reactive({data:{}})
+    // 搜索关键字
+    const searchKeyword = ref(route.params.searchInfo)
     // 菜单ID
     const menuId = ref(route.params.searchInfoTypeId)
+    // 歌曲列表
+    const searchDetailsList = reactive({data:[]})
+    // 歌单列表
+    const songSheetList = reactive({data:[]})
+    // 专辑列表
+    const albumList = reactive({data:[]})
 
-    /**获取搜索详情 */
+    /**事件声明 */
+    // 获取搜索详情
     const getSearchFun = async ()=>{
       const response = await proxy.$axios({
         method:'get',
         url:`${$http}/cloudsearch`,
         params:{
-          keywords:route.params.searchInfo,
-          type:route.params.searchInfoTypeId
+          keywords:searchKeyword.value,
+          type:menuId.value
         }
       })
-      console.log("获取搜索详情",response)
+      if(menuId.value === "10"){
+        let res = response.data.result.albums;
+        res.forEach((item,index)=>{
+          item.InitArtists = [];
+          item.artists.forEach((arItem,arIndex)=>{
+            item.InitArtists[index] = arItem.name
+          })
+          item.InitArtists = item.InitArtists.join(" ")
+        })
+        albumList.data = res;
+      }
+      if(menuId.value === "1"){
+        let res = response.data.result.songs;
+        res.forEach((item,index)=>{
+          item.ars = [];
+          item.ar.forEach((arItem,arIndex)=>{
+            item.ars[arIndex] = arItem.name
+          })
+          item.ars = item.ars.join(" ");
+          item.tns = "";
+          item.dt = dayjs(item.dt).format("HH:mm")
+        })
+        searchDetailsList.data = res
+      }
+      if(menuId.value === "1000"){
+        let res = response.data.result.playlists;
+        console.log(res)
+        res.forEach((item,index)=>{
+          item.playCount = ((item.playCount/10000).toString()).substring(0,3)
+          console.log(item.playCount)
+        })
+        songSheetList.data = res;
+      }
+
     }
+    // 切换分类
+    const handelType = (type)=>{
+      menuId.value = type;
+      getSearchFun()
+    }
+    // 播放全部
+    const palyAllFun = ()=>{
+      store.dispatch("setSongList",searchDetailsList.data)
+      store.dispatch("setMusicNews",searchDetailsList.data[0])
+    }
+
 
     onMounted(()=>{
       getSearchFun()
@@ -115,7 +171,13 @@ export default {
 
     return {
       dataList,
-      menuId
+      searchKeyword,
+      menuId,
+      searchDetailsList,
+      albumList,
+      songSheetList,
+      handelType,
+      palyAllFun
     }
   }
 }

@@ -1,19 +1,21 @@
+
 <!-- 
   - @description 歌单列表
   - @author 龚箭
   - @since 2022/06/21
 -->
+
 <template>
   <div>
-    <div class="albumItem">
+    <div class="albumItem" @click="handelClick(item)" v-for="(item) in songSheetList" :key="item.id">
       <div class="albumLeft">
-        <div class="albumImg"><img src="" alt="" ></div>
-        <div class="albumName">wangzihui</div>
+        <div class="albumImg"><img :src="item.coverImgUrl" alt="" ></div>
+        <div class="albumName">{{item.name}}</div>
       </div>
       <div class="albumRight">
         <div class="albumRightInfo">
-          <div class="albumRightNumber">322首</div>
-          <div class="albumRightAuthor">鹿白川</div>
+          <div class="albumRightNumber">{{item.trackCount}}首</div>
+          <div class="albumRightAuthor">{{item.creator.nickname}}</div>
         </div>
         <div class="albumRightPlayback">
           <span>
@@ -21,7 +23,7 @@
               <use xlink:href="#icon-yunhang"></use>
             </svg>
           </span>
-          <span>920万</span>
+          <span>{{item.playCount}}万</span>
         </div>
       </div>
     </div>
@@ -29,11 +31,25 @@
 </template>
 
 <script>
+import {toRefs} from "vue"
+import {useRouter} from "vue-router"
 export default{
   name:"albumList",
-  setup(){
+  props:{
+    songSheetList:{
+      type:Array
+    }
+  },
+  setup(props){
+    /**全局上下文 */
+    const router = useRouter()
+    const {songSheetList} = toRefs(props)
+    /*事件绑定 */
+    const handelClick = (item)=>{
+      router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
+    }
     return {
-
+      handelClick
     }
   }
 }
@@ -65,6 +81,11 @@ export default{
   border-radius: 10px;
   background: red;
   margin-right: 12px;
+  overflow: hidden;
+}
+.albumImg img{
+  width: 100%;
+  height: 100%;
 }
 .albumName{
   font-size: 14px;

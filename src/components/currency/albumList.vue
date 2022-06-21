@@ -3,24 +3,45 @@
   - @author 龚箭
   - @since 2022/06/21
 -->
+
+<!-- 
+  - @description 歌单列表
+  - @author 龚箭
+  - @since 2022/06/21
+-->
 <template>
   <div>
-    <div class="albumItem">
+    <div class="albumItem" @click="handelClick(item)" v-for="(item) in albumList" :key="item.id">
       <div class="albumLeft">
-        <div class="albumImg"><img src="" alt="" ></div>
-        <div class="albumName">wangzihui</div>
+        <div class="albumImg"><img :src="item.picUrl" alt="" ></div>
+        <div class="albumName">{{item.name}}</div>
       </div>
-      <div class="albumRight">天然卷夏季</div>
+      <div class="albumRight">{{item.InitArtists}}</div>
     </div>
   </div>
 </template>
 
 <script>
+import {toRefs} from "vue";
+import {useRouter} from "vue-router"
 export default{
   name:"albumList",
-  setup(){
+  props:{
+    albumList:{
+      type:Array
+    }
+  },
+  setup(props){
+    /**全局上下文 */
+    const router = useRouter()
+    const {albumList} = toRefs(props)
+    /**事件绑定 */
+    const handelClick = (item)=>{
+      item.id = item.copyrightId
+      router.push({name:'songListDetails',params:{item:JSON.stringify(item)}})
+    }
     return {
-
+      handelClick
     }
   }
 }
@@ -52,6 +73,11 @@ export default{
   border-radius: 10px;
   background: red;
   margin-right: 12px;
+  overflow: hidden;
+}
+.albumImg img{
+  width: 100%;
+  height: 100%;
 }
 .albumName{
   font-size: 14px;
