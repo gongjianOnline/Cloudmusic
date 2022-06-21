@@ -36,14 +36,14 @@
           <div class="searchHotList"  v-if="!recommendList.data.length">
             <div class="searchHot">热搜榜</div>
             <ul class="searchHotListContent">
-              <li v-for="(item,index) in hostList.data" :key="index">
-                <div class="searchHotIndex">{{index+1}}</div>
+              <li v-for="(item,index) in hostList.data" :key="index" @click="handelSearchDetails(item)">
+                <div class="searchHotIndex" :class="{'selectedIndex':index>2}">{{index+1}}</div>
                 <div class="searchHotLabel">{{item.first}}</div>
               </li>
             </ul>
           </div>
           <!-- 搜索推荐 -->
-          <div class="searchHotList222"  v-if="recommendList.data.length">
+          <div class="searchHotList"  v-if="recommendList.data.length">
             <div v-for="(item,index) in recommendList.data" :key="index">
               <div class="searchHot">{{item.name}}</div>
                 <ul class="searchHotListContent">
@@ -256,7 +256,6 @@ export default{
         method:"get",
         url:`${$http}/search/hot`
       })
-      console.log("热搜列表",response)
       hostList.data = response.data.result.hots
     }
     // 监听搜索框输入
@@ -301,7 +300,11 @@ export default{
         recommendList.data = initData
       } 
     },3000)
-    
+    // 点击搜索详情
+    const handelSearchDetails = (item)=>{
+      console.log(item)
+      route.push({name:"searchDetails"})
+    }
 
     watch(()=>store.getters.getIsLogin,(newValue)=>{
       userLoginState.value = newValue
@@ -329,7 +332,8 @@ export default{
       handelLogin,
       handelLogout,
       inspectLogin,
-      handelSearch
+      handelSearch,
+      handelSearchDetails
     }
   }
 }
@@ -451,6 +455,9 @@ export default{
 .searchHotIndex{
   font-size: 14px;
   color:#ff3d3d
+}
+.selectedIndex{
+  color:#333
 }
 .searchHotLabel{
   color:#333333;  

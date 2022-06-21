@@ -60,7 +60,14 @@ const routes = [
           name:"everydayMusic",
           title:"每日推荐歌曲列表",
           component: () => import('../views/everydayMusic.vue'), 
+        },
+        {
+          path: '/searchDetails',
+          name:"searchDetails",
+          title:"搜索详情",
+          component: () => import('../views/searchDetails.vue'), 
         }
+        
       ]
   },
   {
